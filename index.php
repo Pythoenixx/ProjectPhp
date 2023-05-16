@@ -12,7 +12,7 @@ include ('./includes/header.html');
 
 
 <h2>Summary</h2>
-<p>mysql_connect(): To konek to MySQL </p>
+<p>mysql_connect(): To knk to MySQL </p>
 <p>mysql_select_db() : To select database </p>
 <p>mysql_query(): Executing Simple Queries </p>
 <p>mysql_close(): To close the existing MySQL connection </p>
