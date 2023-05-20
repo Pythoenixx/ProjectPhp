@@ -15,13 +15,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 header("Location: AddAgents.php");
                 exit();
             } elseif ($option == "add_product") {
-                header("Location: AddOrUpdate.php");
+                header("Location: Selection.php");
                 exit();
             }
         }
     } else {
         $errors[] = "Please select an option.";
     }
+}
+if (isset($_POST['logout'])) {
+    // Redirect to the same page
+    header("Location: Logout.php");
+    exit();
 }
 ?>
 
@@ -35,6 +40,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <p><input type="radio" name="option" value="add_product"> Add/Update Product Details</p>
     </label>
     <button type="submit" name="submit">Proceed</button>
+    <p><input type="submit" name="logout" value="Logout" /></p>
     
     <?php
     if (!empty($errors)) {

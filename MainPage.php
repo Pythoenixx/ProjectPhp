@@ -1,8 +1,18 @@
+<?php
+$page_title = 'Main Page';
+include('./includes/header.html');
+?>
 <form method="POST" action="MainPage.php">
-    <p><input type="text" name="id" placeholder="ID" value="<?php if (isset($_POST['id'])) echo $_POST['id']; ?>">
-    <p><input type="text" name="contact_name" placeholder="Contact Name" value="<?php if (isset($_POST['contact_name'])) echo $_POST['contact_name']; ?>"></p>
+    <p><input type="text" name="username" placeholder="Username" value="<?php if (isset($_POST['username'])) echo $_POST['username']; ?>">
+    <p><input type="password" name="password" placeholder="Password"></p>
     <p><input type="submit" name="submit" value="Login"></p>
 </form>
+<form method="POST" action="Register.php"> 
+    <p>Not Registered Yet ? Click Below !</p>
+    <p><input type="submit" name="register" value="Register"></p>
+</form>
+
+
 <?php
 
 require_once('mysqli.php'); // Connect to the db.
@@ -12,47 +22,39 @@ $errors = []; // Declare $errors variable outside the if statement
 
 if (isset($_REQUEST['submit'])) {
     // Retrieve login form data
-    $id = $_POST['id'];
-    $contact_name = $_POST['contact_name'];
+    $username = $_POST['username'];
+    $password = $_POST['password'];
 
-    if (empty($id)) {
-        $errors[] = "ID is required.";
+    if (empty($username)) {
+        $errors[] = "Username is required.";
     }
 
-    if (empty($contact_name)) {
-        $errors[] = "Contact name is required.";
+    if (empty($password)) {
+        $errors[] = "Password is required.";
     }
 
     if (count($errors) === 0) {
-        // Check if ID starts with 5 (for agents)
-        if (substr($id, 0, 1) === '5') {
-            // Check agents table
-            $query = "SELECT * FROM agents WHERE agent_id='$id' AND contact_name='$contact_name'";
-            $result = $dbc->query($query);
+        // Check user table for username and password
+        $query = "SELECT * FROM users WHERE username='$username' AND password='$password'";
+        $result = $dbc->query($query);
 
-            if ($result->num_rows > 0) {
-                // Valid agent found
+        if ($result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            $role = $row['role'];
+
+            // Redirect based on the user's role
+            if ($role === 'agent') {
                 // Redirect to the agents page
                 header("Location: agents_page.php");
                 exit();
-            }
-        }
-
-        // Check if ID starts with 8 (for suppliers)
-        if (substr($id, 0, 1) === '8') {
-            // Check suppliers table
-            $query = "SELECT * FROM suppliers WHERE supplier_id='$id' AND contact_name='$contact_name'";
-            $result = $dbc->query($query);
-
-            if ($result->num_rows > 0) {
-                // Valid supplier found
+            } elseif ($role === 'supplier') {
                 // Redirect to the suppliers page
                 header("Location: supplier_page.php");
                 exit();
             }
         }
 
-        $errors[] = "Invalid ID or contact name.";
+        $errors[] = "Invalid username or password.";
     }
 }
 
@@ -65,4 +67,5 @@ if (count($errors) > 0) {
         echo '<p style="color: red;">' . $error . '</p>';
     }
 }
+include('./includes/footer.html');
 ?>
