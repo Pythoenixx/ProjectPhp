@@ -3,7 +3,7 @@
 DEFINE ('DB_USER', 'root');
 DEFINE ('DB_PASSWORD', ' ');
 DEFINE ('DB_HOST', 'localhost');
-DEFINE ('DB_NAME', 'isb42503');
+DEFINE ('DB_NAME', 'projeck');
 // Make the connection.
 $dbc = @mysqli_connect(DB_HOST, DB_USER) OR die ('Could not connect to MySQL: ' . mysqli_connect_errno() );
 echo"<p>Successfully connected to MySQL</p>\n";
