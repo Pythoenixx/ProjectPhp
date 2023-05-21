@@ -18,6 +18,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 header("Location: Selection.php");
                 exit();
             }
+            elseif ($option == "view_sale") {
+                header("Location: ViewSale.php");
+                exit();
+            }
+            elseif ($option == "view_total") {
+                header("Location: ViewTotal.php");
+                exit();
+            }
         }
     } else {
         $errors[] = "Please select an option.";
@@ -38,6 +46,12 @@ if (isset($_POST['logout'])) {
     </label>
     <label>
         <p><input type="radio" name="option" value="add_product"> Add/Update Product Details</p>
+    </label>
+    <label>
+        <p><input type="radio" name="option" value="view_sale"> View Sales Performance</p>
+    </label>
+    <label>
+        <p><input type="radio" name="option" value="view_total"> View Total Performance</p>
     </label>
     <button type="submit" name="submit">Proceed</button>
     <p><input type="submit" name="logout" value="Logout" /></p>
