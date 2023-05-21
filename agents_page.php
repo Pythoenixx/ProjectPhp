@@ -51,11 +51,21 @@ if (isset($_POST['logout'])) {
     header("Location: Logout.php");
     exit();
 }
+if (isset($_POST['order'])) {
+    // Redirect to the same page
+    header("Location: Order.php");
+    exit();
+}
 
 mysqli_close($dbc); // Close the database connection.
+?>
 
+<form action="agents_page.php" method="POST">
+<p><input type="submit" name="logout" value="Logout" /></p>
+<p><input type="submit" name="order" value="Make Order" /></p>
+</form>
+
+<?php
 include ('./includes/footer.html'); // Include the HTML footer.
 ?>
-<form>
-<p><input type="submit" name="logout" value="Logout" /></p>
-</form>
+
