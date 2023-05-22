@@ -51,7 +51,7 @@ if (isset($_POST['submit'])) {
     // Retrieve the submitted data
     $errors = [];
 
-    if (empty($_POST['product_id'])) {
+    if (($_POST['product_id'] == "")) {
         $errors[] = 'You forgot to enter product id.';
     } else {
         $product_id = $_POST['product_id'];
