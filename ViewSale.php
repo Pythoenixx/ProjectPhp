@@ -24,9 +24,6 @@ if ($result->num_rows > 0) {
     echo '<table>
             <tr>
                 <th>Sale ID</th>
-                <th>Order ID</th>
-                <th>Product ID</th>
-                <th>Agent ID</th>
                 <th>Quantity Sold</th>
                 <th>Total Sell</th>
                 <th>Net Amount</th>
@@ -34,14 +31,14 @@ if ($result->num_rows > 0) {
                 <th>Commission</th>
                 <th>Profit</th>
                 <th>Sale Date</th>
+                <th>Order ID</th>
+                <th>Product ID</th>
+                <th>Agent ID</th>
             </tr>';
 
     while ($row = $result->fetch_assoc()) {
         echo '<tr>
                 <td>' . $row['sales_id'] . '</td>
-                <td>' . $row['order_id'] . '</td>
-                <td>' . $row['product_id'] . '</td>
-                <td>' . $row['agent_id'] . '</td>
                 <td>' . $row['quantity_sold'] . '</td>
                 <td>' . $row['total_sell'] . '</td>
                 <td>' . $row['net_amount'] . '</td>
@@ -49,6 +46,9 @@ if ($result->num_rows > 0) {
                 <td>' . $row['commission'] . '</td>
                 <td>' . $row['profit'] . '</td>
                 <td>' . $row['sales_date'] . '</td>
+                <td>' . $row['order_id'] . '</td>
+                <td>' . $row['product_id'] . '</td>
+                <td>' . $row['agent_id'] . '</td>
             </tr>';
     }
 
