@@ -2,15 +2,27 @@
 $page_title = 'Main Page';
 include('./includes/header.html');
 ?>
-<form method="POST" action="MainPage.php">
-    <p><input type="text" name="username" placeholder="Username" value="<?php if (isset($_POST['username'])) echo $_POST['username']; ?>">
-    <p><input type="password" name="password" placeholder="Password"></p>
-    <p><input type="submit" name="submit" value="Login"></p>
-</form>
-<form method="POST" action="Register.php"> 
-    <p>Not Registered Yet ? Click Below !</p>
-    <p><input type="submit" name="register" value="Register"></p>
-</form>
+<div class="login-box">
+    <form method="POST" action="MainPage.php">
+        <div class="user-box"><input type="text" name="username" value="<?php if (isset($_POST['username'])) echo $_POST['username']; ?>" required="">
+    <label>Username</label>
+        </div>
+        <div class="user-box">
+            <input type="password" name="password" required="">
+            <label>Password</label>
+        </div>
+        <div class="butang" style="margin-top: 20px;margin-bottom: 20px;">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <input type="submit" name="submit" value="Login" class="butang-teks">
+        </div>
+    </form>
+    <div style="color: #fff;">Not Registered Yet ? <a href="Register.php">Register Here!</a>
+    </div>
+</div>
+
 
 
 <?php
