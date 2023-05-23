@@ -5,7 +5,7 @@ include('./includes/header.html');
 require_once('mysqli.php'); // Connect to the db.
 global $dbc;
 
-$query0 = "SELECT product_name, product_description, price, cost FROM products";
+$query0 = "SELECT product_name, product_description, price, cost, quantity FROM products";
 $result = mysqli_query($dbc, $query0); // Run the query.
 $num = mysqli_num_rows($result) or die('SQL Statement: ' . mysqli_error($dbc));
 
@@ -20,6 +20,7 @@ if ($num > 0) { // If it ran OK, display the records.
             <td align="left"><b>Product Description</b></td>
             <td align="left"><b>Price</b></td>
             <td align="left"><b>Cost</b></td>
+            <td align="left"><b>Quantity</b></td>
         </tr>';
 
     // Fetch and print all the records.
@@ -29,6 +30,7 @@ if ($num > 0) { // If it ran OK, display the records.
             <td align="left">' . $row['product_description'] . '</td>
             <td align="left">' . $row['price'] . '</td>
             <td align="left">' . $row['cost'] . '</td>
+            <td align="left">' . $row['quantity'] . '</td>
         </tr>';
     }
 
@@ -110,9 +112,9 @@ if (isset($_POST['submitted'])) {
 
     if (empty($errors)) { // If everything's okay.
 
-        // Insert the product into the database.
         $query = "INSERT INTO products (product_name, product_description, cost, price, quantity, supplier_id) VALUES ('$product_name', '$product_description', '$cost', '$price', '$quantity', '$supplier_id')";
         $result = mysqli_query($dbc, $query);
+
 
         if ($result) { // If it ran OK.
 

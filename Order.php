@@ -11,12 +11,42 @@ include('./includes/header.html');
 <h1>Order Management</h1>
 <form action="Order.php" method="post">
 
-<p>Agent ID: <input type="int" name="agentId" size="20" maxlength="40" value="<?php if (isset($_POST['agentId'])) echo $_POST['agentId']; ?>"></p>
+<p>Agent ID:
+<select name="agentId">
+    <?php
+    require_once('mysqli.php');
+    global $dbc;
+
+    $agentQuery = "SELECT agent_id FROM agents";
+    $agentResult = $dbc->query($agentQuery);
+
+    while ($agentRow = $agentResult->fetch_assoc()) {
+        $agentId = $agentRow['agent_id'];
+        echo "<option value='$agentId'>$agentId</option>";
+    }
+    ?>
+</select>
+</p>
+
 <p>Customer Name: <input type="text" name="customerName" size="20" maxlength="40" value="<?php if (isset($_POST['customerName'])) echo $_POST['customerName']; ?>"></p>
 <p>Customer.Address: <textarea name="customerAddress" rows="5" cols="50"><?php if (isset($_POST['customerAddress'])) echo $_POST['customerAddress']; ?></textarea></p>
 <p>Customer Phone Number: <input type="text" name="customerPhone" size='10' maxlength='15' value="<?php if (isset($_POST['customerPhone'])) echo $_POST['customerPhone']; ?>"></p>
 <p>Order Date: <input type="date" name="date" size="4" maxlength="4" value="<?php if (isset($_POST['date'])) echo $_POST['date']; ?>"/></p>
-<p>Product ID: <input type="text" name="productID" size="4" maxlength="4" value="<?php if (isset($_POST['productID'])) echo $_POST['productID']; ?>"></p>
+
+<p>Product ID:
+<select name="productID">
+    <?php
+    $productQuery = "SELECT product_id FROM products";
+    $productResult = $dbc->query($productQuery);
+
+    while ($productRow = $productResult->fetch_assoc()) {
+        $productId = $productRow['product_id'];
+        echo "<option value='$productId'>$productId</option>";
+    }
+    ?>
+</select>
+</p>
+
 <p>Product Quantity: <input type="text" name="productQuantity" size="4" maxlength="4" value="<?php if (isset($_POST['productQuantity'])) echo $_POST['productQuantity']; ?>"/></p>
 <p><input type="submit" name="submit" value="Submit"/></p>
 <input type="hidden" name="submitted" value="TRUE" />
@@ -34,7 +64,7 @@ if (isset($_POST['submitted'])) {
     // Validate the input
     $errors = array();
     if (empty($_POST['agentId'])) {
-        $errors[] = "You forgot to enter your Agent ID.";
+        $errors[] = "You forgot to select the Agent ID.";
     } else {
         // Check if the agent exists in the agents table and has the correct format
         $agentId = $_POST['agentId'];
@@ -75,7 +105,7 @@ if (isset($_POST['submitted'])) {
 
     // Check if the product ID is empty
     if (empty($_POST['productID'])) {
-        $errors[] = "You forgot to enter the product ID.";
+        $errors[] = "You forgot to select the product ID.";
     } else {
         // Check if the product ID is a number
         if (!is_numeric($_POST['productID'])) {
@@ -131,7 +161,7 @@ if (isset($_POST['submitted'])) {
             $dbc->query($updateQuery);
 
             // Redirect the user to the order list page
-            echo 'waiting for supplier approval';
+            echo 'Waiting for supplier approval';
         } else {
             echo '<h1>Error!</h1>
             <p class="error">The product is out of stock. We apologize for any inconvenience.</p>';
@@ -144,4 +174,3 @@ if (isset($_POST['submitted'])) {
 
 include('./includes/footer.html'); // Include the HTML footer.
 ?>
-
