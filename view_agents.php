@@ -19,7 +19,7 @@ if ($num > 0) { // If it ran OK, display the records.
 
     // Table header.
     echo '<table align="center" cellspacing="0" cellpadding="5">
-	<tr><td align="left"><b>Agent ID</b></td><td align="left"><b>Agent Name</b></td><td align="left"><b>Contact Name</b></td><td align="left"><b>Contact Email</b></td><td align="left"><b>Contact Phone</b></td><td align="left"><b>Supplier ID</b></td></tr>';
+<tr><td align="left"><b>Agent ID</b></td><td align="left"><b>Agent Name</b></td><td align="left"><b>Username</b></td><td align="left"><b>Contact Email</b></td><td align="left"><b>Contact Phone</b></td><td align="left"><b>Supplier ID</b></td></tr>';
 
     // Fetch and print all the records.
     while ($row = @mysqli_fetch_array($result, MYSQLI_ASSOC)) {
