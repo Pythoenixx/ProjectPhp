@@ -13,27 +13,26 @@ function generateRandomPassword($length = 8)
     return $password;
 }
 
-$query0 = "SELECT supplier_id, supplier_name, contact_name, contact_email, contact_phone FROM suppliers ORDER BY supplier_id ASC";
+$query0 = "SELECT supplier_id, supplier_name FROM suppliers ORDER BY supplier_id ASC";
 $result = mysqli_query($dbc, $query0); // Run the query.
 $num = mysqli_num_rows($result);
 
 if ($num > 0) {
     echo "<p>There are currently $num registered suppliers.</p>\n";
 
-    echo '<table align="center" cellspacing="0" cellpadding="5">
-    <tr><td align="left"><b>Supplier ID</b></td><td align="left"><b>Supplier Name</b></td><td align="left"><b>Contact Name</b></td><td align="left"><b>Contact Email</b></td><td align="left"><b>Contact Phone</b></td></tr>';
-
+    echo '<form action="AddAgents.php" method="post">';
+    echo '<p>Agent ID: <input type="text" name="agent_id" size="15" maxlength="15" value="' . (isset($_POST['agent_id']) ? $_POST['agent_id'] : '') . '" /></p>';
+    echo '<p>Agent Name: <input type="text" name="agent_name" size="15" maxlength="15" value="' . (isset($_POST['agent_name']) ? $_POST['agent_name'] : '') . '" /></p>';
+    echo '<p>Contact Name: <input type="text" name="contact_name" size="15" maxlength="15" value="' . (isset($_POST['contact_name']) ? $_POST['contact_name'] : '') . '" /></p>';
+    echo '<p>Contact Email: <input type="text" name="contact_email" size="15" maxlength="30" value="' . (isset($_POST['contact_email']) ? $_POST['contact_email'] : '') . '" /></p>';
+    echo '<p>Contact Phone: <input type="text" name="contact_phone" size="15" maxlength="15" value="' . (isset($_POST['contact_phone']) ? $_POST['contact_phone'] : '') . '" /></p>';
+    echo '<p>Supplier ID: <select name="supplier_id">';
     while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
-        echo '<tr>';
-        echo '<td align="left">' . $row['supplier_id'] . '</td>';
-        echo '<td align="left">' . $row['supplier_name'] . '</td>';
-        echo '<td align="left">' . $row['contact_name'] . '</td>';
-        echo '<td align="left">' . $row['contact_email'] . '</td>';
-        echo '<td align="left">' . $row['contact_phone'] . '</td>';
-        echo '</tr>';
+        echo '<option value="' . $row['supplier_id'] . '">' . $row['supplier_id'] . ' - ' . $row['supplier_name'] . '</option>';
     }
-
-    echo '</table>';
+    echo '</select></p>';
+    echo '<p><input type="submit" name="submit" value="Add Agent" /></p>';
+    echo '</form>';
 
     mysqli_free_result($result);
 } else {
@@ -145,39 +144,26 @@ if (isset($_POST['submit'])) {
                 }
             } else {
                 // If inserting into the agents table failed.
-                echo '<h1 id="mainhead">System Error</h1>
-                <p class="error">The agent could not be added due to a system error. We apologize for any inconvenience.</p>';
+                echo '<h1 id="mainhead">System Error</h1<p class="error">The agent could not be added due to a system error. We apologize for any inconvenience.</p>';
                 echo '<p>' . mysqli_error($dbc) . '<br /><br />Query: ' . $query . '</p>';
                 include('./includes/footer.html');
                 exit();
             }
         } else {
-            // Already registered.
-            echo '<h1 id="mainhead">Error!</h1>
-            <p class="error">The contact email has already been registered.</p>';
+            // If the contact email is already registered.
+            echo '<h1 id="mainhead">Duplicate Email</h1>
+                <p class="error">The contact email you entered is already registered with another agent. Please enter a different email address.</p>';
         }
     } else {
-        // Report the errors.
+        // If there are validation errors.
         echo '<h1 id="mainhead">Error!</h1>
-        <p class="error">The following error(s) occurred:<br />';
-        foreach ($errors as $msg) {
-            echo " - $msg<br />\n";
+        <p class="error">The following error(s) occurred:</p>';
+        foreach ($errors as $error) {
+            echo '<p class="error">' . $error . '</p>';
         }
-        echo '</p><p>Please try again.</p><p><br /></p>';
     }
 }
-?>
 
-<form action="AddAgents.php" method="post">
-    <p>Agent ID: <input type="text" name="agent_id" size="15" maxlength="15" value="<?php echo isset($_POST['agent_id']) ? $_POST['agent_id'] : ''; ?>" /></p>
-    <p>Agent Name: <input type="text" name="agent_name" size="15" maxlength="15" value="<?php echo isset($_POST['agent_name']) ? $_POST['agent_name'] : ''; ?>" /></p>
-    <p>Contact Name: <input type="text" name="contact_name" size="15" maxlength="15" value="<?php echo isset($_POST['contact_name']) ? $_POST['contact_name'] : ''; ?>" /></p>
-    <p>Contact Email: <input type="text" name="contact_email" size="15" maxlength="30" value="<?php echo isset($_POST['contact_email']) ? $_POST['contact_email'] : ''; ?>" /></p>
-    <p>Contact Phone: <input type="text" name="contact_phone" size="15" maxlength="15" value="<?php echo isset($_POST['contact_phone']) ? $_POST['contact_phone'] : ''; ?>" /></p>
-    <p>Supplier ID: <input type="text" name="supplier_id" size="15" maxlength="15" value="<?php echo isset($_POST['supplier_id']) ? $_POST['supplier_id'] : ''; ?>" /></p>
-    <p><input type="submit" name="submit" value="Add Agent" /></p>
-</form>
-
-<?php
+mysqli_close($dbc);
 include('./includes/footer.html');
 ?>
