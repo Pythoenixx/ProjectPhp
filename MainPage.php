@@ -2,7 +2,9 @@
 $page_title = 'Main Page';
 session_start();
 ?>
-<link rel="stylesheet" type="text/css" href="includes/efek.css" />
+	<link rel="stylesheet" type="text/css" href="includes/efek.css" />
+
+
 <div class="login-box">
     <form method="POST" action="MainPage.php">
         <div class="user-box">
