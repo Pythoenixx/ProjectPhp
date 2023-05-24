@@ -8,6 +8,9 @@ session_start();
         <div class="user-box">
             <input type="text" name="username" value="<?php if (isset($_POST['username'])) echo $_POST['username']; ?>" required="">
             <label>Username</label>
+        <div class="user-box">
+            <input type="text" name="username" value="<?php if (isset($_POST['username'])) echo $_POST['username']; ?>" required="">
+            <label>Username</label>
         </div>
         <div class="user-box">
             <input type="password" name="password" required="">
@@ -22,12 +25,14 @@ session_start();
         </div>
     </form>
     <div style="color: #fff;">Not Registered Yet? <a href="Register.php">Register Here!</a></div>
+    <div style="color: #fff;">Not Registered Yet? <a href="Register.php">Register Here!</a></div>
 </div>
 
 <?php
 require_once('mysqli.php'); // Connect to the db.
 global $dbc;
 
+$errors = [];
 $errors = [];
 
 if (isset($_REQUEST['submit'])) {
@@ -66,7 +71,33 @@ if (isset($_REQUEST['submit'])) {
                     header("Location: agents_page.php");
                     exit();
                 }
+                // Get the agent's ID from the agents table
+                $agent_username = $row['username'];
+                $query = "SELECT agent_id FROM agents WHERE agent_name='$agent_username'";
+                $result = $dbc->query($query);
+
+                if ($result->num_rows > 0) {
+                    $agent_row = $result->fetch_assoc();
+                    $_SESSION['agent_id'] = $agent_row['agent_id'];
+
+                    header("Location: agents_page.php");
+                    exit();
+                }
             } elseif ($role === 'supplier') {
+                // Get the supplier's ID from the suppliers table
+                $supplier_username = $row['username'];
+                $query = "SELECT supplier_id FROM suppliers WHERE supplier_name='$supplier_username'";
+                $result = $dbc->query($query);
+
+                if ($result->num_rows > 0) {
+                    $supplier_row = $result->fetch_assoc();
+                    $_SESSION['supplier_id'] = $supplier_row['supplier_id'];
+
+                    header("Location: supplier_page.php");
+                    exit();
+                }
+            }
+        }
                 // Get the supplier's ID from the suppliers table
                 $supplier_username = $row['username'];
                 $query = "SELECT supplier_id FROM suppliers WHERE supplier_name='$supplier_username'";
@@ -83,8 +114,8 @@ if (isset($_REQUEST['submit'])) {
         }
 
         $errors[] = "Invalid username or password.";
-    }
-}
+    
+
 
 $dbc->close();
 ?>
