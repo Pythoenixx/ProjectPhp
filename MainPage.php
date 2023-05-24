@@ -1,11 +1,13 @@
 <?php
 $page_title = 'Main Page';
-include('./includes/header.html');
+session_start();
 ?>
+<link rel="stylesheet" type="text/css" href="includes/efek.css" />
 <div class="login-box">
     <form method="POST" action="MainPage.php">
-        <div class="user-box"><input type="text" name="username" value="<?php if (isset($_POST['username'])) echo $_POST['username']; ?>" required="">
-    <label>Username</label>
+        <div class="user-box">
+            <input type="text" name="username" value="<?php if (isset($_POST['username'])) echo $_POST['username']; ?>" required="">
+            <label>Username</label>
         </div>
         <div class="user-box">
             <input type="password" name="password" required="">
@@ -19,18 +21,14 @@ include('./includes/header.html');
             <input type="submit" name="submit" value="Login" class="butang-teks">
         </div>
     </form>
-    <div style="color: #fff;">Not Registered Yet ? <a href="Register.php">Register Here!</a>
-    </div>
+    <div style="color: #fff;">Not Registered Yet? <a href="Register.php">Register Here!</a></div>
 </div>
 
-
-
 <?php
-
 require_once('mysqli.php'); // Connect to the db.
 global $dbc;
 
-$errors = []; // Declare $errors variable outside the if statement
+$errors = [];
 
 if (isset($_REQUEST['submit'])) {
     // Retrieve login form data
@@ -56,13 +54,31 @@ if (isset($_REQUEST['submit'])) {
 
             // Redirect based on the user's role
             if ($role === 'agent') {
-                // Redirect to the agents page
-                header("Location: agents_page.php");
-                exit();
+                // Get the agent's ID from the agents table
+                $agent_username = $row['username'];
+                $query = "SELECT agent_id FROM agents WHERE agent_name='$agent_username'";
+                $result = $dbc->query($query);
+
+                if ($result->num_rows > 0) {
+                    $agent_row = $result->fetch_assoc();
+                    $_SESSION['agent_id'] = $agent_row['agent_id'];
+
+                    header("Location: agents_page.php");
+                    exit();
+                }
             } elseif ($role === 'supplier') {
-                // Redirect to the suppliers page
-                header("Location: supplier_page.php");
-                exit();
+                // Get the supplier's ID from the suppliers table
+                $supplier_username = $row['username'];
+                $query = "SELECT supplier_id FROM suppliers WHERE supplier_name='$supplier_username'";
+                $result = $dbc->query($query);
+
+                if ($result->num_rows > 0) {
+                    $supplier_row = $result->fetch_assoc();
+                    $_SESSION['supplier_id'] = $supplier_row['supplier_id'];
+
+                    header("Location: supplier_page.php");
+                    exit();
+                }
             }
         }
 
