@@ -1,7 +1,7 @@
 <?php
 $page_title = 'Main Page';
-include('./includes/header.html');
 ?>
+	<link rel="stylesheet" type="text/css" href="includes/efek.css" />
 <div class="login-box">
     <form method="POST" action="MainPage.php">
         <div class="user-box"><input type="text" name="username" value="<?php if (isset($_POST['username'])) echo $_POST['username']; ?>" required="">
