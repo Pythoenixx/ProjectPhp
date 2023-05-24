@@ -10,9 +10,6 @@ session_start();
         <div class="user-box">
             <input type="text" name="username" value="<?php if (isset($_POST['username'])) echo $_POST['username']; ?>" required="">
             <label>Username</label>
-        <div class="user-box">
-            <input type="text" name="username" value="<?php if (isset($_POST['username'])) echo $_POST['username']; ?>" required="">
-            <label>Username</label>
         </div>
         <div class="user-box">
             <input type="password" name="password" required="">
@@ -27,14 +24,12 @@ session_start();
         </div>
     </form>
     <div style="color: #fff;">Not Registered Yet? <a href="Register.php">Register Here!</a></div>
-    <div style="color: #fff;">Not Registered Yet? <a href="Register.php">Register Here!</a></div>
 </div>
 
 <?php
 require_once('mysqli.php'); // Connect to the db.
 global $dbc;
 
-$errors = [];
 $errors = [];
 
 if (isset($_REQUEST['submit'])) {
@@ -114,10 +109,6 @@ if (isset($_REQUEST['submit'])) {
                 }
             }
         }
-
-        $errors[] = "Invalid username or password.";
-    
-
 
 $dbc->close();
 ?>
