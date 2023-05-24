@@ -2,6 +2,7 @@
 $page_title = 'Add New Agent';
 include('./includes/header.html');
 require_once('mysqli.php');
+session_start();
 
 function generateRandomPassword($length = 8)
 {
@@ -26,11 +27,6 @@ if ($num > 0) {
     echo '<p>Contact Name: <input type="text" name="contact_name" size="15" maxlength="15" value="' . (isset($_POST['contact_name']) ? $_POST['contact_name'] : '') . '" /></p>';
     echo '<p>Contact Email: <input type="text" name="contact_email" size="15" maxlength="30" value="' . (isset($_POST['contact_email']) ? $_POST['contact_email'] : '') . '" /></p>';
     echo '<p>Contact Phone: <input type="text" name="contact_phone" size="15" maxlength="15" value="' . (isset($_POST['contact_phone']) ? $_POST['contact_phone'] : '') . '" /></p>';
-    echo '<p>Supplier ID: <select name="supplier_id">';
-    while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
-        echo '<option value="' . $row['supplier_id'] . '">' . $row['supplier_id'] . ' - ' . $row['supplier_name'] . '</option>';
-    }
-    echo '</select></p>';
     echo '<p><input type="submit" name="submit" value="Add Agent" /></p>';
     echo '</form>';
 
@@ -90,10 +86,10 @@ if (isset($_POST['submit'])) {
     }
 
     // Check for supplier id.
-    if (empty($_POST['supplier_id'])) {
-        $errors[] = 'You forgot to enter the supplier ID.';
+    if (!isset($_SESSION['supplier_id'])) {
+        $errors[] = 'Invalid supplier ID. Please log in again.';
     } else {
-        $supplier_id = $_POST['supplier_id'];
+        $supplier_id = $_SESSION['supplier_id'];
 
         // Check if supplier ID exists.
         $query = "SELECT supplier_id FROM suppliers WHERE supplier_id='$supplier_id'";

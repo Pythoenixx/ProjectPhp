@@ -1,4 +1,5 @@
 <?php
+session_start();
 $page_title = 'Add Product';
 include('./includes/header.html');
 
@@ -89,25 +90,7 @@ if (isset($_POST['submitted'])) {
     }
 
     // Check for supplier ID.
-    if (empty($_POST['supplier_id'])) {
-        $errors[] = 'You forgot to enter the supplier ID.';
-    } else {
-        $supplier_id = $_POST['supplier_id'];
 
-        // Validate supplier ID format.
-        if (!preg_match('/^8\d{3}$/', $supplier_id)) {
-            $errors[] = 'Supplier ID must start with 8 and have 4 digits.';
-        } else {
-            // Check if supplier ID already exists.
-            $query = "SELECT supplier_id, COUNT(*) AS product_count FROM products WHERE supplier_id = '$supplier_id'";
-            $result = mysqli_query($dbc, $query);
-            $row = mysqli_fetch_assoc($result);
-            $productCount = $row['product_count'];
-
-            if ($productCount >= 3) {
-                $errors[] = 'Supplier ID already has 3 or more products. Please choose a different supplier ID.';
-            }
-        }
     }
 
     if (empty($errors)) { // If everything's okay.
@@ -144,7 +127,7 @@ if (isset($_POST['submitted'])) {
     } // End of if (empty($errors)) IF.
 
     mysqli_close($dbc); // Close the database connection.
-} // End of the main Submit conditional.
+ // End of the main Submit conditional.
 
 if (isset($_POST['logout'])) {
     // Redirect to the same page
@@ -161,7 +144,6 @@ if (isset($_POST['logout'])) {
     <p>Cost: <input type="text" name="cost" size="10" maxlength="10" value="<?php if (isset($_POST['cost'])) echo $_POST['cost']; ?>" /></p>
     <p>Price: <input type="text" name="price" size="10" maxlength="10" value="<?php if (isset($_POST['price'])) echo $_POST['price']; ?>" /></p>
     <p>Quantity: <input type="text" name="quantity" size="5" maxlength="5" value="<?php if (isset($_POST['quantity'])) echo $_POST['quantity']; ?>" /></p>
-    <p>Supplier ID: <input type="text" name="supplier_id" size="5" maxlength="5" value="<?php if (isset($_POST['supplier_id'])) echo $_POST['supplier_id']; ?>" /></p>
     <p><input type="submit" name="submit" value="Add Product" /></p>
     <input type="hidden" name="submitted" value="TRUE" />
 </form>
