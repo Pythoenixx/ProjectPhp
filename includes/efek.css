@@ -1,3 +1,12 @@
+:root {
+  font-size: 16px;
+  font-family: "Open Sans";
+  --text-primary: #23232e;
+  --text-secondary: #141418;
+  --bg-primary: rgb(79, 195, 247);
+  --bg-secondary: rgb(132, 255, 255);
+  --transition-speed: 600ms;
+}
 html {
     height: 100%;
     color: #fff;
@@ -7,9 +16,103 @@ html {
     margin:0;
     padding:0;
     font-family: sans-serif;
-    background: linear-gradient(#141e30, #243b55);
+    background: linear-gradient(rgb(1, 87, 155), rgb(128, 216, 255));
+  }
+  body::-webkit-scrollbar {
+    width: 0.25rem;
   }
   
+  body::-webkit-scrollbar-track {
+    background: #1e1e24;
+  }
+  
+  body::-webkit-scrollbar-thumb {
+    background: #6649b8;
+  }
+  
+  main {
+    position: relative;
+    top: 25%;
+    left: 25%;
+    width: 600px;
+    padding: 40px;
+  }
+  .navbar {
+    position: fixed;
+    background: linear-gradient(rgb(24, 255, 255), rgb(132, 255, 255));
+    transition: width 600ms ease;
+  }
+  
+  .navbar-nav {
+    list-style: none;	
+    padding: 0;	
+    margin: 0;	
+    display: flex;	
+    flex-direction: column;	
+    height: 100%;
+  }
+  
+  .all-item {
+    margin: auto 0;
+  }
+  .nav-item {
+    width: 100%;
+  }
+  
+  /* .logout{
+    display: block;
+    margin-top: auto;
+  } */
+  
+  .emoji {
+    font-size: 2rem;	
+    margin: 0 1rem;
+  }
+  
+  .nav-link {
+    display: flex;
+    align-items: center;
+    height: 5rem;
+    color: var(--text-primary);
+    text-decoration: none;
+    filter: grayscale(100%) opacity(0.7);
+    transition: var(--transition-speed);
+  
+  }
+  
+  .nav-link:hover {
+    filter: grayscale(0%) opacity(1);
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+  }
+  
+  .link-text {
+    display: none;
+    margin-left: 1rem;
+  }
+  @media only screen and (min-width: 600px) {
+    .navbar {
+      top: 0;
+      width: 5rem;
+      height: 100vh;
+    }
+  
+    .navbar:hover {
+      width: 16rem;
+    }
+  
+    .navbar:hover .link-text {
+      display: inline;
+    }
+  
+    .navbar:hover .logo svg {
+      margin-left: 11rem;
+    }
+  
+    .navbar:hover .logo-text {
+      left: 0px;
+    }
+  }
   .login-box {
     position: absolute;
     top: 50%;
