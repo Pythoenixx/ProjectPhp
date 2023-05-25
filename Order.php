@@ -21,7 +21,7 @@ include('./includes/header.html');
         $agentId = $_SESSION['agent_id'];
     } else {
         // Redirect the user to the login page or handle authentication logic
-        header('Location: login.php');
+        header('Location: MainPage.php');
         exit();
     }
     ?>
