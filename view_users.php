@@ -9,7 +9,7 @@ require_once('mysqli.php'); // Connect to the db.
 global $dbc;
 
 // Make the query.
-$query = "SELECT user_id, username, password, first_name, last_name, email, phone_number, role FROM users ORDER BY user_id ASC";
+$query = "SELECT user_id, username, password, email, phone_number, role FROM users ORDER BY user_id ASC";
 $result = mysqli_query($dbc, $query); // Run the query.
 $num = mysqli_num_rows($result) or die('SQL Statement: ' . mysqli_error($dbc));
 
