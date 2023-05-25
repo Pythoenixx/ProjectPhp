@@ -22,7 +22,6 @@ if ($num > 0) {
     echo "<p>There are currently $num registered suppliers.</p>\n";
 
     echo '<form action="AddAgents.php" method="post">';
-    echo '<p>Agent ID: <input type="text" name="agent_id" size="15" maxlength="15" value="' . (isset($_POST['agent_id']) ? $_POST['agent_id'] : '') . '" /></p>';
     echo '<p>Agent Name: <input type="text" name="agent_name" size="15" maxlength="15" value="' . (isset($_POST['agent_name']) ? $_POST['agent_name'] : '') . '" /></p>';
     echo '<p>Contact Name: <input type="text" name="contact_name" size="15" maxlength="15" value="' . (isset($_POST['contact_name']) ? $_POST['contact_name'] : '') . '" /></p>';
     echo '<p>Contact Email: <input type="text" name="contact_email" size="15" maxlength="30" value="' . (isset($_POST['contact_email']) ? $_POST['contact_email'] : '') . '" /></p>';
@@ -37,25 +36,6 @@ if ($num > 0) {
 
 if (isset($_POST['submit'])) {
     $errors = [];
-
-    // Check for agent ID.
-    if (empty($_POST['agent_id'])) {
-        $errors[] = 'You forgot to enter the agent ID.';
-    } else {
-        $agent_id = $_POST['agent_id'];
-
-        // Validate agent ID format.
-        if (!preg_match('/^5[0-9]{3}$/', $agent_id)) {
-            $errors[] = 'Agent ID should start with 5 and have 4 digits.';
-        }
-
-        // Check if agent ID already exists.
-        $query = "SELECT agent_id FROM agents WHERE agent_id='$agent_id'";
-        $result = mysqli_query($dbc, $query);
-        if (mysqli_num_rows($result) > 0) {
-            $errors[] = 'Agent ID already exists. Please choose a different one.';
-        }
-    }
 
     // Check for agent name.
     if (empty($_POST['agent_name'])) {
@@ -107,8 +87,8 @@ if (isset($_POST['submit'])) {
         $result = mysqli_query($dbc, $query);
         if (mysqli_num_rows($result) == 0) {
             // Insert into agents table.
-            $query = "INSERT INTO agents (agent_id, agent_name, contact_name, contact_email, contact_phone, supplier_id) 
-                      VALUES ('$agent_id', '$agent_name', '$contact_name', '$contact_email', '$contact_phone', '$supplier_id')";
+            $query = "INSERT INTO agents (agent_name, contact_name, contact_email, contact_phone, supplier_id) 
+                      VALUES ('$agent_name', '$contact_name', '$contact_email', '$contact_phone', '$supplier_id')";
             $result = mysqli_query($dbc, $query);
 
             if ($result) {

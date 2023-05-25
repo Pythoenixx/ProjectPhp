@@ -4,16 +4,15 @@ session_start();
 ?>
 <link rel="stylesheet" type="text/css" href="includes/efek.css" />
 
-
 <div class="login-box">
-<h2>Login</h2>
+    <h2>Login</h2>
     <form method="POST" action="MainPage.php">
         <div class="user-box">
-            <input type="text" name="username" value="<?php if (isset($_POST['username'])) echo $_POST['username']; ?>" required="">
+            <input type="text" name="username" value="<?php if (isset($_POST['username'])) echo $_POST['username']; ?>" >
             <label>Username</label>
         </div>
         <div class="user-box">
-            <input type="password" name="password" required="">
+            <input type="password" name="password" >
             <label>Password</label>
         </div>
         <div class="butang" style="margin-top: 20px;margin-bottom: 20px;">
@@ -83,6 +82,8 @@ if (isset($_REQUEST['submit'])) {
                     exit();
                 }
             }
+        } else {
+            $errors[] = "Invalid username or password.";
         }
     }
 }
@@ -96,5 +97,6 @@ if (count($errors) > 0) {
         echo '<p style="color: red;">' . $error . '</p>';
     }
 }
+
 include('./includes/footer.html');
 ?>
