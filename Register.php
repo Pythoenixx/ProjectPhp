@@ -1,6 +1,5 @@
 <?php
 $page_title = 'Register as Supplier';
-include('./includes/header.html');
 
 // Check if the form has been submitted.
 if (isset($_POST['submitted'])) {
@@ -107,15 +106,40 @@ if (isset($_POST['submitted'])) {
     mysqli_close($dbc); // Close the database connection.
 } // End of the main Submit conditional.
 ?>
-<h2>Register as Supplier</h2>
-<form action="register.php" method="post">
-    <p>Username: <input type="text" name="username" size="15" maxlength="15" value="<?php if (isset($_POST['username'])) echo $_POST['username']; ?>" /></p>
-    <p>Password: <input type="password" name="password1" size="10" maxlength="20" /></p>
-    <p>Confirm Password: <input type="password" name="password2" size="10" maxlength="20" /></p>
-    <p>Email Address: <input type="text" name="email" size="20" maxlength="40" value="<?php if (isset($_POST['email'])) echo $_POST['email']; ?>" /></p>
-    <p>Phone Number: <input type="text" name="phone_number" size="15" maxlength="15" value="<?php if (isset($_POST['phone_number'])) echo $_POST['phone_number']; ?>" /></p>
-    <p><input type="submit" name="submit" value="Register" /></p>
-    <input type="hidden" name="submitted" value="TRUE" />
+<link rel="stylesheet" type="text/css" href="includes/efek.css" />
+<div class="login-box">
+    <h2>Register as Supplier</h2>
+    <form action="register.php" method="post">
+        <div class="user-box">
+            <input type="text" name="username" required="" maxlength="15" value="<?php if (isset($_POST['username'])) echo $_POST['username']; ?>" /></p>
+            <label>Username</label>
+        </div>
+        <div class="user-box">
+            <input type="password" name="password1" required="" maxlength="20" />
+            <label>Password</label>
+        </div>
+        <div class="user-box">
+            <input type="password" name="password2" required="" maxlength="20" />
+            <label>Confirm Password</label>
+        </div>
+        <div class="user-box">
+            <input type="text" name="email" required="" maxlength="40" value="<?php if (isset($_POST['email'])) echo $_POST['email']; ?>" /></p>
+            <label>Email</label>
+        </div>
+        <div class="user-box">
+            <input type="text" name="phone_number" required="" maxlength="15" value="<?php if (isset($_POST['phone_number'])) echo $_POST['phone_number']; ?>" /></p>
+            <label>Phone Number</label>
+        </div>
+        <div class="butang">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <input type="submit" name="submit" value="Register" class="butang-teks"/>
+        </div>
+        <input type="hidden" name="submitted" value="TRUE" />
+</div>
+
 </form>
 <?php
 include('./includes/footer.html');
