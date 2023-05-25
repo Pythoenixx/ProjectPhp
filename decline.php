@@ -8,7 +8,7 @@ if (isset($_REQUEST['id'])) {
     $orderId = $_REQUEST['id'];
 
     // Update the order status in the database to 'declined'
-    $sql = "UPDATE orders SET status = 'declined' WHERE order_id = $orderId";
+    $sql = "UPDATE orders SET status = 'Declined' WHERE order_id = $orderId";
     $dbc->query($sql);
 
     // Perform any necessary actions for order decline

@@ -14,6 +14,7 @@ include ('./includes/header.html');
 <thead>
 <tr>
 <th>Order ID</th>
+<th>Agent ID</th>
 <th>Customer Name</th>
 <th>Customer Address</th>
 <th>Customer Phone Number</th>
@@ -36,6 +37,7 @@ $results = $dbc->query($sql);
 foreach ($results as $row) {
     echo '<tr>';
     echo '<td>' . $row['order_id'] . '</td>';
+    echo '<td>' . $row['agent_id'] . '</td>';
     echo '<td>' . $row['customer_name'] . '</td>';
     echo '<td>' . $row['customer_address'] . '</td>';
     echo '<td>' . $row['customer_phone'] . '</td>';

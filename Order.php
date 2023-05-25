@@ -11,22 +11,21 @@ include('./includes/header.html');
 <h1>Order Management</h1>
 <form action="Order.php" method="post">
 
-<p>Agent ID:
-<select name="agentId">
+
     <?php
     require_once('mysqli.php');
     global $dbc;
 
-    $agentQuery = "SELECT agent_id FROM agents";
-    $agentResult = $dbc->query($agentQuery);
-
-    while ($agentRow = $agentResult->fetch_assoc()) {
-        $agentId = $agentRow['agent_id'];
-        echo "<option value='$agentId'>$agentId</option>";
+    session_start();
+    if (isset($_SESSION['agent_id'])) {
+        $agentId = $_SESSION['agent_id'];
+    } else {
+        // Redirect the user to the login page or handle authentication logic
+        header('Location: login.php');
+        exit();
     }
     ?>
-</select>
-</p>
+
 
 <p>Customer Name: <input type="text" name="customerName" size="20" maxlength="40" value="<?php if (isset($_POST['customerName'])) echo $_POST['customerName']; ?>"></p>
 <p>Customer.Address: <textarea name="customerAddress" rows="5" cols="50"><?php if (isset($_POST['customerAddress'])) echo $_POST['customerAddress']; ?></textarea></p>
@@ -64,21 +63,7 @@ if (isset($_POST['submitted'])) {
 
     // Validate the input
     $errors = array();
-    if (empty($_POST['agentId'])) {
-        $errors[] = "You forgot to select the Agent ID.";
-    } else {
-        // Check if the agent exists in the agents table and has the correct format
-        $agentId = $_POST['agentId'];
-        if (!preg_match('/^5\d{3}$/', $agentId)) {
-            $errors[] = "The Agent ID must start with 5 and have 4 digits.";
-        } else {
-            $agentQuery = "SELECT * FROM agents WHERE agent_id = '$agentId'";
-            $agentResult = $dbc->query($agentQuery);
-            if ($agentResult->num_rows == 0) {
-                $errors[] = "The Agent ID does not exist.";
-            }
-        }
-    }
+   
 
     // Check if the customer name is empty
     if (empty($_POST['customerName'])) {
@@ -140,7 +125,6 @@ if (empty($_POST['productQuantity'])) {
         // If the product is in stock, create the order
         if ($product['quantity'] >= $_POST['productQuantity']) {
             // Insert the order into the database
-            $agentId = $_POST['agentId'];
             $customerName = $_POST['customerName'];
             $customerAddress = $_POST['customerAddress'];
             $customerPhone = $_POST['customerPhone'];
