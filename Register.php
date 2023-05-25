@@ -28,20 +28,6 @@ if (isset($_POST['submitted'])) {
         $errors[] = 'You forgot to enter your password.';
     }
 
-    // Check for a first name.
-    if (empty($_POST['first_name'])) {
-        $errors[] = 'You forgot to enter your first name.';
-    } else {
-        $first_name = $_POST['first_name'];
-    }
-
-    // Check for a last name.
-    if (empty($_POST['last_name'])) {
-        $errors[] = 'You forgot to enter your last name.';
-    } else {
-        $last_name = $_POST['last_name'];
-    }
-
     // Check for an email address.
     if (empty($_POST['email'])) {
         $errors[] = 'You forgot to enter your email address.';
@@ -66,34 +52,23 @@ if (isset($_POST['submitted'])) {
         if (mysqli_num_rows($result) == 0) {
 
             // Insert into users table.
-            $query = "INSERT INTO users (username, password, first_name, last_name, email, phone_number, registration_date, role) 
-                      VALUES ('$username', '$password', '$first_name', '$last_name', '$email', '$phone_number', NOW(),  'supplier')";
+            $query = "INSERT INTO users (username, password, email, phone_number, registration_date, role) 
+                      VALUES ('$username', '$password', '$email', '$phone_number', NOW(), 'supplier')";
             $result = @mysqli_query($dbc, $query); // Run the query.
             if ($result) { // If it ran OK.
 
                 // Get the last inserted user_id.
                 $user_id = mysqli_insert_id($dbc);
 
-                // Generate the supplier_id.
-                $query = "SELECT MAX(supplier_id) AS max_supplier_id FROM suppliers";
-                $result = mysqli_query($dbc, $query);
-                $row = mysqli_fetch_assoc($result);
-                $max_supplier_id = $row['max_supplier_id'];
-                if ($max_supplier_id >= 8000 && $max_supplier_id <= 8999) {
-                    $supplier_id = $max_supplier_id + 1;
-                } else {
-                    $supplier_id = 8000;
-                }
-
-                // Pad the supplier_id with leading zeros to ensure a minimum of 4 digits.
-                $supplier_id = str_pad($supplier_id, 4, '0', STR_PAD_LEFT);
-
                 // Insert into supplier table.
-                $query = "INSERT INTO suppliers (supplier_id, supplier_name, contact_name, contact_email, contact_phone) 
-                          VALUES ('$supplier_id', '$username', '$first_name $last_name', '$email', '$phone_number')";
+                $query = "INSERT INTO suppliers (supplier_name, contact_email, contact_phone) 
+                          VALUES ('$username', '$email', '$phone_number')";
                 $result = mysqli_query($dbc, $query);
 
                 if ($result) {
+                    // Get the inserted supplier_id.
+                    $supplier_id = mysqli_insert_id($dbc);
+
                     // Print a success message.
                     echo '<h1 id="mainhead">Thank you!</h1>
                     <p>You are now registered as a supplier.</p><p><br /></p>';
@@ -130,7 +105,6 @@ if (isset($_POST['submitted'])) {
     } // End of if (empty($errors)) IF.
     mysqli_close($dbc); // Close the database connection.
 } // End of the main Submit conditional.
-
 ?>
 <link rel="stylesheet" type="text/css" href="includes/efek.css" />
 <div class="login-box">
@@ -147,14 +121,6 @@ if (isset($_POST['submitted'])) {
         <div class="user-box">
             <input type="password" name="password2" required="" maxlength="20" />
             <label>Confirm Password</label>
-        </div>
-        <div class="user-box">
-            <input type="text" name="first_name" required="" maxlength="15" value="<?php if (isset($_POST['first_name'])) echo $_POST['first_name']; ?>" /></p>
-            <label>First Name</label>
-        </div>
-        <div class="user-box">
-            <input type="text" name="last_name" required="" maxlength="30" value="<?php if (isset($_POST['last_name'])) echo $_POST['last_name']; ?>" /></p>
-            <label>Last Name</label>
         </div>
         <div class="user-box">
             <input type="text" name="email" required="" maxlength="40" value="<?php if (isset($_POST['email'])) echo $_POST['email']; ?>" /></p>
