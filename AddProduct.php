@@ -89,9 +89,8 @@ if (isset($_POST['submitted'])) {
         $quantity = $_POST['quantity'];
     }
 
-    // Check for supplier ID.
-
-    }
+    // Retrieve the supplier ID from the session.
+    $supplier_id = $_SESSION['supplier_id'];
 
     if (empty($errors)) { // If everything's okay.
 
@@ -127,7 +126,7 @@ if (isset($_POST['submitted'])) {
     } // End of if (empty($errors)) IF.
 
     mysqli_close($dbc); // Close the database connection.
- // End of the main Submit conditional.
+} // End of the main Submit conditional.
 
 if (isset($_POST['logout'])) {
     // Redirect to the same page
