@@ -8,11 +8,11 @@ session_start();
     <h2>Login</h2>
     <form method="POST" action="MainPage.php">
         <div class="user-box">
-            <input type="text" name="username" value="<?php if (isset($_POST['username'])) echo $_POST['username']; ?>" >
+            <input type="text" name="username" required=""value="<?php if (isset($_POST['username'])) echo $_POST['username']; ?>" >
             <label>Username</label>
         </div>
         <div class="user-box">
-            <input type="password" name="password" >
+            <input type="password" name="password" required="">
             <label>Password</label>
         </div>
         <div class="butang" style="margin-top: 20px;margin-bottom: 20px;">
