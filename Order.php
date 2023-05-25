@@ -33,15 +33,16 @@ include('./includes/header.html');
 <p>Customer Phone Number: <input type="text" name="customerPhone" size='10' maxlength='15' value="<?php if (isset($_POST['customerPhone'])) echo $_POST['customerPhone']; ?>"></p>
 <p>Order Date: <input type="date" name="date" size="4" maxlength="4" value="<?php if (isset($_POST['date'])) echo $_POST['date']; ?>"/></p>
 
-<p>Product ID:
+<p>Product:
 <select name="productID">
     <?php
-    $productQuery = "SELECT product_id FROM products";
+    $productQuery = "SELECT product_id, product_name FROM products";
     $productResult = $dbc->query($productQuery);
 
     while ($productRow = $productResult->fetch_assoc()) {
         $productId = $productRow['product_id'];
-        echo "<option value='$productId'>$productId</option>";
+        $productName = $productRow['product_name'];
+        echo "<option value='$productId'>$productName</option>";
     }
     ?>
 </select>
@@ -105,29 +106,24 @@ if (isset($_POST['submitted'])) {
 
     // Check if the product ID is empty
     if (empty($_POST['productID'])) {
-        $errors[] = "You forgot to select the product ID.";
-    } else {
-        // Check if the product ID is a number
-        if (!is_numeric($_POST['productID'])) {
-            $errors[] = "The product ID must be a number.";
-        } else {
-            $productId = $_POST['productID'];
-            $productQuery = "SELECT * FROM products WHERE product_id = '$productId'";
-            $productResult = $dbc->query($productQuery);
-            if ($productResult->num_rows == 0) {
-                $errors[] = "The product ID does not exist.";
-            }
-        }
-    }
+        $errors[] = "You forgot to select the product.";
+    } 
+    
 
     // Check if the product quantity is empty
-    if (empty($_POST['productQuantity'])) {
-        $errors[] = "You forgot to enter the product quantity.";
+if (empty($_POST['productQuantity'])) {
+    $errors[] = "You forgot to enter the product quantity.";
+} else {
+    // Check if the product quantity is a number
+    if (!is_numeric($_POST['productQuantity'])) {
+        $errors[] = "The product quantity must be a number.";
     } else {
-        // Check if the product quantity is a number
-        if (!is_numeric($_POST['productQuantity'])) {
-            $errors[] = "The product quantity must be a number.";
+        // Check if the product quantity is within the limit
+        $productQuantity = intval($_POST['productQuantity']);
+        if ($productQuantity < 1 || $productQuantity > 10) {
+            $errors[] = "The product quantity must be between 1 and 10.";
         }
+    }
     }
 
     // If there are any errors, display them to the user
@@ -168,7 +164,6 @@ if (isset($_POST['submitted'])) {
         }
     }
 
-    // Close the database connection
     mysqli_close($dbc); // Close the database connection.
 }
 

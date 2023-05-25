@@ -45,10 +45,13 @@ foreach ($results as $row) {
     echo '<td>';
     if ($row['status'] == 'pending') {
         echo '<a href="approve.php?id=' . $row['order_id'] . '">Approve</a>';
+        echo ' | ';
+        echo '<a href="decline.php?id=' . $row['order_id'] . '">Decline</a>';
     } 
     echo '</td>';
     echo '</tr>';
 }
+
 
 mysqli_close($dbc); // Close the database connection.
 ?>
