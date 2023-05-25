@@ -2,10 +2,11 @@
 $page_title = 'Main Page';
 session_start();
 ?>
-	<link rel="stylesheet" type="text/css" href="includes/efek.css" />
+<link rel="stylesheet" type="text/css" href="includes/efek.css" />
 
 
 <div class="login-box">
+<h2>Login</h2>
     <form method="POST" action="MainPage.php">
         <div class="user-box">
             <input type="text" name="username" value="<?php if (isset($_POST['username'])) echo $_POST['username']; ?>" required="">
@@ -68,18 +69,6 @@ if (isset($_REQUEST['submit'])) {
                     header("Location: agents_page.php");
                     exit();
                 }
-                // Get the agent's ID from the agents table
-                $agent_username = $row['username'];
-                $query = "SELECT agent_id FROM agents WHERE agent_name='$agent_username'";
-                $result = $dbc->query($query);
-
-                if ($result->num_rows > 0) {
-                    $agent_row = $result->fetch_assoc();
-                    $_SESSION['agent_id'] = $agent_row['agent_id'];
-
-                    header("Location: agents_page.php");
-                    exit();
-                }
             } elseif ($role === 'supplier') {
                 // Get the supplier's ID from the suppliers table
                 $supplier_username = $row['username'];
@@ -95,20 +84,8 @@ if (isset($_REQUEST['submit'])) {
                 }
             }
         }
-                // Get the supplier's ID from the suppliers table
-                $supplier_username = $row['username'];
-                $query = "SELECT supplier_id FROM suppliers WHERE supplier_name='$supplier_username'";
-                $result = $dbc->query($query);
-
-                if ($result->num_rows > 0) {
-                    $supplier_row = $result->fetch_assoc();
-                    $_SESSION['supplier_id'] = $supplier_row['supplier_id'];
-
-                    header("Location: supplier_page.php");
-                    exit();
-                }
-            }
-        }
+    }
+}
 
 $dbc->close();
 ?>
