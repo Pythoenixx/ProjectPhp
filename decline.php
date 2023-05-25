@@ -4,8 +4,8 @@ require_once('mysqli.php');
 global $dbc;
 
 // Retrieve the order ID from the URL parameter
-if (isset($_GET['id'])) {
-    $orderId = $_GET['id'];
+if (isset($_REQUEST['id'])) {
+    $orderId = $_REQUEST['id'];
 
     // Update the order status in the database to 'declined'
     $sql = "UPDATE orders SET status = 'declined' WHERE order_id = $orderId";
