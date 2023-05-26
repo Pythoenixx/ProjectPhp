@@ -2,7 +2,7 @@
 session_start();
 
 // Check if the agent is logged in
-if (!isset($_SESSION['agent_id'])) {
+if (!isset($_SESSION['username'])) {
     // Redirect to the login page if not logged in
     header("Location: MainPage.php");
     exit();
@@ -22,16 +22,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $errors[] = 'Please enter your current password.';
     } else {
         $current_password = mysqli_real_escape_string($dbc, $_POST['current_password']);
-        $agent_id = $_SESSION['agent_id'];
+        $username = $_SESSION['username'];
 
         // Check if the current password is correct
-        $query = "SELECT password, username FROM users WHERE user_id = $agent_id";
+        $query = "SELECT password FROM users WHERE username = '$username'";
         $result = $dbc->query($query);
 
         if ($result->num_rows == 1) {
             $row = $result->fetch_assoc();
             $stored_password = $row['password'];
-            $username = $row['username'];
 
             // Verify the current password
             if ($current_password !== $stored_password) {
@@ -98,4 +97,3 @@ if (!empty($errors)) {
 <?php
 include('./includes/footer.html');
 ?>
-
