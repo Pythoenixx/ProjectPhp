@@ -5,7 +5,7 @@ session_start();
 <link rel="stylesheet" type="text/css" href="includes/efek.css" />
 
 <div class="login-box">
-    <h2>Login</h2>
+<h2>Login apa jadi kalau ada dua pull request?</h2>
     <form method="POST" action="MainPage.php">
         <div class="user-box">
             <input type="text" name="username" required=""value="<?php if (isset($_POST['username'])) echo $_POST['username']; ?>" >
