@@ -38,11 +38,11 @@ include('./includes/header.html');
     while ($productRow = $productResult->fetch_assoc()) {
         $productId = $productRow['product_id'];
         $productName = $productRow['product_name'];
-        echo "<label><input type='checkbox' name='productID[]' value='$productId'> $productName</label><br>";
+        echo "<label><input type='checkbox' name='productID[]' value='$productId'> $productName</label>";
+        echo "<input type='number' name='productQuantity[$productId]' min='1' max='10' value='1'><br>";
     }
     ?>
 
-    <p>Product Quantity: <input type="text" name="productQuantity" size="4" maxlength="4" value="<?php if (isset($_POST['productQuantity'])) echo $_POST['productQuantity']; ?>"/></p>
     <p><input type="submit" name="submit" value="Add to Cart"/></p>
     <input type="hidden" name="submitted" value="TRUE" />
 
@@ -88,22 +88,6 @@ if (isset($_POST['submitted'])) {
         $errors[] = "You forgot to select any products.";
     }
 
-    // Check if the product quantity is empty
-    if (empty($_POST['productQuantity'])) {
-        $errors[] = "You forgot to enter the product quantity.";
-    } else {
-        // Check if the product quantity is a number
-        if (!is_numeric($_POST['productQuantity'])) {
-            $errors[] = "The product quantity must be a number.";
-        } else {
-            // Check if the product quantity is within the limit
-            $productQuantity = intval($_POST['productQuantity']);
-            if ($productQuantity < 1 || $productQuantity > 10) {
-                $errors[] = "The product quantity must be between 1 and 10.";
-            }
-        }
-    }
-
     // If there are any errors, display them to the user
     if (!empty($errors)) {
         foreach ($errors as $error) {
@@ -118,13 +102,13 @@ if (isset($_POST['submitted'])) {
             $product = $productResult->fetch_assoc();
 
             // If the product is in stock, create the order
-            if ($product && $product['quantity'] >= $_POST['productQuantity']) {
+            if ($product && $product['quantity'] >= $_POST['productQuantity'][$productId]) {
                 // Insert the order into the database
                 $customerName = $_POST['customerName'];
                 $customerAddress = $_POST['customerAddress'];
                 $customerPhone = $_POST['customerPhone'];
                 $orderDate = $_POST['date'];
-                $productQuantity = $_POST['productQuantity'];
+                $productQuantity = $_POST['productQuantity'][$productId];
 
                 $sql = "INSERT INTO orders (agent_id, customer_name, customer_address, customer_phone, order_date, product_id, order_quantity, status) VALUES ('$agentId', '$customerName', '$customerAddress', '$customerPhone', '$orderDate', '$productId', '$productQuantity', 'pending')";
                 $stmt = $dbc->prepare($sql);
