@@ -43,7 +43,7 @@ include('./includes/header.html');
     }
     ?>
 
-    <p><input type="submit" name="submit" value="Add to Cart"/></p>
+    <p><input type="submit" name="submit" value="Submit"/></p>
     <input type="hidden" name="submitted" value="TRUE" />
 
 </form>
@@ -83,36 +83,38 @@ if (isset($_POST['submitted'])) {
         $errors[] = "You forgot to enter the date.";
     }
 
-    // Check if any products are selected
-    if (empty($_POST['productID'])) {
-        $errors[] = "You forgot to select any products.";
-    }
 
-    // If there are any errors, display them to the user
-    if (!empty($errors)) {
-        foreach ($errors as $error) {
-            echo '<p class="error">' . $error . '</p>';
-        }
-    } else {
+    // If there are no errors, create the order
+    if (empty($errors)) {
+        // Retrieve customer information
+        $customerName = $_POST['customerName'];
+        $customerAddress = $_POST['customerAddress'];
+        $customerPhone = $_POST['customerPhone'];
+        $orderDate = $_POST['date'];
+
+        // Insert the order into the database
+        $sql = "INSERT INTO orders (agent_id, customer_name, customer_address, customer_phone, order_date, status) VALUES ('$agentId', '$customerName', '$customerAddress', '$customerPhone', '$orderDate', 'pending')";
+        $stmt = $dbc->prepare($sql);
+        $stmt->execute();
+
+        // Get the newly inserted order ID
+        $orderId = $stmt->insert_id;
+
         // Loop through the selected product IDs
         foreach ($_POST['productID'] as $productId) {
-            // Check if the product is in stock
+            // Retrieve product information
             $productQuery = "SELECT * FROM products WHERE product_id = '$productId'";
             $productResult = $dbc->query($productQuery);
             $product = $productResult->fetch_assoc();
 
-            // If the product is in stock, create the order
+            // Check if the product is in stock
             if ($product && $product['quantity'] >= $_POST['productQuantity'][$productId]) {
-                // Insert the order into the database
-                $customerName = $_POST['customerName'];
-                $customerAddress = $_POST['customerAddress'];
-                $customerPhone = $_POST['customerPhone'];
-                $orderDate = $_POST['date'];
+                // Retrieve product quantity
                 $productQuantity = $_POST['productQuantity'][$productId];
 
-                $sql = "INSERT INTO orders (agent_id, customer_name, customer_address, customer_phone, order_date, product_id, order_quantity, status) VALUES ('$agentId', '$customerName', '$customerAddress', '$customerPhone', '$orderDate', '$productId', '$productQuantity', 'pending')";
-                $stmt = $dbc->prepare($sql);
-                $stmt->execute();
+                // Insert the product order into the database
+                $sql = "INSERT INTO order_products (order_id, product_id, order_quantity) VALUES ('$orderId', '$productId', '$productQuantity')";
+                $dbc->query($sql);
 
                 // Update the product quantity
                 $newQuantity = $product['quantity'] - $productQuantity;
@@ -124,6 +126,13 @@ if (isset($_POST['submitted'])) {
                 echo '<h1>Error!</h1>
                 <p class="error">The product ' . $product['product_name'] . ' is out of stock. We apologize for any inconvenience.</p>';
             }
+        }
+
+        echo '<p>Order created successfully. Order ID: ' . $orderId . '</p>';
+    } else {
+        // Display validation errors
+        foreach ($errors as $error) {
+            echo '<p class="error">' . $error . '</p>';
         }
     }
 
