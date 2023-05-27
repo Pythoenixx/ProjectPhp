@@ -18,14 +18,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 header("Location: Selection.php");
                 exit();
             }
-            elseif ($option == "view_sale") {
-                header("Location: ViewSale.php");
-                exit();
-            }
-            elseif ($option == "view_total") {
-                header("Location: ViewTotal.php");
-                exit();
-            }
         }
     } else {
         $errors[] = "Please select an option.";
