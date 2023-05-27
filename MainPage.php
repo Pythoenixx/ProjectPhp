@@ -54,6 +54,9 @@ if (isset($_REQUEST['submit'])) {
             $row = $result->fetch_assoc();
             $role = $row['role'];
 
+            //Store the username in the session for agent change password
+            $_SESSION['username'] = $row['username'];
+
             // Redirect based on the user's role
             if ($role === 'agent') {
                 // Get the agent's ID from the agents table

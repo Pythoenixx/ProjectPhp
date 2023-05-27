@@ -56,6 +56,11 @@ if (isset($_POST['order'])) {
     header("Location: Order.php");
     exit();
 }
+if (isset($_POST['changePassword'])) {
+    // Redirect to the same page
+    header("Location: changePassword.php");
+    exit();
+}
 
 mysqli_close($dbc); // Close the database connection.
 ?>
@@ -63,6 +68,7 @@ mysqli_close($dbc); // Close the database connection.
 <form action="agents_page.php" method="POST">
 <p><input type="submit" name="logout" value="Logout" /></p>
 <p><input type="submit" name="order" value="Make Order" /></p>
+<p><input type="submit" name="changePassword" value="Do You Wish To Change Password ?" /></p>
 </form>
 
 <?php
