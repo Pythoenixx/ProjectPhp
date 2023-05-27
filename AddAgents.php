@@ -25,7 +25,7 @@ if ($num > 0) {
     echo '<p>Agent Name: <input type="text" name="agent_name" size="15" maxlength="15" value="' . (isset($_POST['agent_name']) ? $_POST['agent_name'] : '') . '" /></p>';
     echo '<p>Contact Name: <input type="text" name="contact_name" size="15" maxlength="15" value="' . (isset($_POST['contact_name']) ? $_POST['contact_name'] : '') . '" /></p>';
     echo '<p>Contact Email: <input type="text" name="contact_email" size="15" maxlength="30" value="' . (isset($_POST['contact_email']) ? $_POST['contact_email'] : '') . '" /></p>';
-    echo '<p>Contact Phone: <input type="text" name="contact_phone" size="15" maxlength="15" value="' . (isset($_POST['contact_phone']) ? $_POST['contact_phone'] : '') . '" /></p>';
+    echo '<p>Contact Phone: <input type="number" name="contact_phone" size="15"  value="' . (isset($_POST['contact_phone']) ? $_POST['contact_phone'] : '') . '" /></p>';
     echo '<p><input type="submit" name="submit" value="Add Agent" /></p>';
     echo '</form>';
 
@@ -54,6 +54,8 @@ if (isset($_POST['submit'])) {
     // Check for contact email.
     if (empty($_POST['contact_email'])) {
         $errors[] = 'You forgot to enter the contact email.';
+    } elseif (!preg_match("/^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/", $_POST['contact_email'])) {
+        $errors[] = 'Invalid contact email. Please enter a valid email address.';
     } else {
         $contact_email = $_POST['contact_email'];
     }
@@ -61,9 +63,12 @@ if (isset($_POST['submit'])) {
     // Check for contact phone.
     if (empty($_POST['contact_phone'])) {
         $errors[] = 'You forgot to enter the contact phone.';
+    } elseif (!preg_match('/^\d{11}$/', $_POST['contact_phone'])) {
+        $errors[] = 'Invalid contact phone. Please enter a valid phone number.';
     } else {
         $contact_phone = $_POST['contact_phone'];
     }
+
 
     // Check for supplier id.
     if (!isset($_SESSION['supplier_id'])) {
