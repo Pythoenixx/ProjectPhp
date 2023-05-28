@@ -79,16 +79,10 @@ if (isset($_POST['logout'])) {
 <h1>Supplier Page</h1>
 
 <form action="" method="POST">
-    <label>
-        <p><input type="radio" name="option" value="register_agent"> Register New Agent</p>
-    </label>
-    <label>
-        <p><input type="radio" name="option" value="add_product"> Add/Update Product Details</p>
-    </label>
-    <button type="submit" name="submit">Proceed</button>
-    <p><input type="submit" name="logout" value="Logout" /></p>
-    
-    <?php
+<label for="">WIP</label>
+<label for=""><br>To add/update products, please select Product on the sidebar</label>
+</form>
+<?php
     if (!empty($errors)) {
         echo '<div class="error">';
         foreach ($errors as $error) {
@@ -97,7 +91,6 @@ if (isset($_POST['logout'])) {
         echo '</div>';
     }
     ?>
-</form>
 
 <?php
 include ('./includes/footer.html');
