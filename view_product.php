@@ -35,6 +35,26 @@ if ($num > 0) { // If it ran OK, display the records.
     }
 
     echo '</table>';
+    echo <<<HTML
+<form  method="post">
+<div class="tengah" style="display: flex;justify-content: center;flex-direction: row;">
+<div class="butang" style="margin-top: 20px;margin-bottom: 20px;">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+<input type="submit" name="submit" value="ADD PRODUCT" class="butang-teks">
+        </div>
+        <div class="butang" style="margin-top: 20px;margin-bottom: 20px;">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+<input type="submit" name="submit" value="UPDATE PRODUCT" class="butang-teks">
+        </div>
+    </div>
+</form>
+HTML;
 
     @mysqli_free_result($result); // Free up the resources.
 } else { // If it did not run OK.
@@ -44,4 +64,3 @@ if ($num > 0) { // If it ran OK, display the records.
 @mysqli_close($dbc); // Close the database connection.
 
 include('./includes/footer.html'); // Include the HTML footer.
-?>
