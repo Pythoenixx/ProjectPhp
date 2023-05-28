@@ -1,9 +1,4 @@
 <?php
-$page_title = 'Approval';
-include('./includes/header.html');
-?>
-
-<?php
 // Connect to the database
 require_once('mysqli.php');
 global $dbc;
@@ -12,11 +7,11 @@ global $dbc;
 if (isset($_REQUEST['id'])) {
     $orderId = $_REQUEST['id'];
 
-    // Update the order status in the database to 'approved'
-    $sql = "UPDATE orders SET status = 'Approved' WHERE order_id = $orderId";
+    // Update the order status in the database to 'declined'
+    $sql = "UPDATE orders SET status = 'Declined' WHERE order_id = $orderId";
     $dbc->query($sql);
 
-    // Perform any necessary actions for order approval
+    // Perform any necessary actions for order decline
 
     // Redirect back to the order management page
     header('Location: order_list.php');
@@ -26,9 +21,4 @@ if (isset($_REQUEST['id'])) {
     header('Location: error.php');
     exit;
 }
-?>
-
-
-<?php
-include('./includes/footer.html');
 ?>
