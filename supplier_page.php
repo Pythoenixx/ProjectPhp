@@ -51,28 +51,11 @@ $errors = [];
 
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    if (isset($_POST["option"])) {
-        $option = $_POST["option"];
-
-        if (empty($option)) {
-            $errors[] = "Please select an option.";
-        } else {
-            if ($option == "register_agent") {
-                header("Location: AddAgents.php");
-                exit();
-            } elseif ($option == "add_product") {
-                header("Location: Selection.php");
-                exit();
-            }
-        }
-    } else {
-        $errors[] = "Please select an option.";
-    }
-}
 if (isset($_POST['logout'])) {
     // Redirect to the same page
     header("Location: Logout.php");
     exit();
+}
 }
 ?>
 
@@ -81,6 +64,7 @@ if (isset($_POST['logout'])) {
 <form action="" method="POST">
 <label for="">WIP</label>
 <label for=""><br>To add/update products, please select Product on the sidebar</label>
+<p><input type="submit" name="logout" value="Logout" /></p>
 </form>
 <?php
     if (!empty($errors)) {
