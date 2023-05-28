@@ -12,19 +12,8 @@ include('./includes/header.html');
         <?php
         // Get the selected value from the query string
         $selected = (isset($_GET["role"])) ? $_GET["role"] : "All";
-
-        // Check if the value is set and not empty
-        if ($selected != "All" && !empty($selected)) {
-            // Loop through the options array
-            $options = array("All", "Agent", "Supplier");
-            foreach ($options as $option) {
-                // Check if the option matches the selected value
-                if ($option == $selected) {
-                    // Add the selected attribute to the option tag
-                    echo "<option value='$option' selected style='display: none;'>$option</option>";
-                }
-            }
-        }
+        // if the value isn't All, create new option, make it selected and hide it
+        if ($selected != "All") echo "<option value='$selected' selected style='display: none;'>$selected</option>";
         ?>
     </select>
 </form>
