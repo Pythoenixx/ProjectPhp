@@ -5,14 +5,14 @@ session_start();
 <link rel="stylesheet" type="text/css" href="includes/efek.css" />
 
 <div class="login-box">
-    <h2>Login</h2>
+<h2>Login</h2>
     <form method="POST" action="MainPage.php">
         <div class="user-box">
-            <input type="text" name="username" value="<?php if (isset($_POST['username'])) echo $_POST['username']; ?>" >
+            <input type="text" name="username" required=""value="<?php if (isset($_POST['username'])) echo $_POST['username']; ?>" >
             <label>Username</label>
         </div>
         <div class="user-box">
-            <input type="password" name="password" >
+            <input type="password" name="password" required="">
             <label>Password</label>
         </div>
         <div class="butang" style="margin-top: 20px;margin-bottom: 20px;">
@@ -53,6 +53,9 @@ if (isset($_REQUEST['submit'])) {
         if ($result->num_rows > 0) {
             $row = $result->fetch_assoc();
             $role = $row['role'];
+
+            //Store the username in the session for agent change password
+            $_SESSION['username'] = $row['username'];
 
             // Redirect based on the user's role
             if ($role === 'agent') {
