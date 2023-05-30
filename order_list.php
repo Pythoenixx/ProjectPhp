@@ -21,6 +21,7 @@ include ('./includes/header.html');
 <th>Product ID</th>
 <th>Order Quantity</th>
 <th>Status</th>
+<th>Action</th>
 </tr>
 </thead>
 <tbody>
@@ -28,7 +29,16 @@ include ('./includes/header.html');
 
 // Connect to the database
 require_once('mysqli.php');
+global $dbc;
+
+// Function to update the status of an order
+function updateOrderStatus($orderId, $status)
+{
     global $dbc;
+    $sql = "UPDATE orders SET status='$status' WHERE order_id='$orderId'";
+    $dbc->query($sql);
+}
+
 // Get all the orders
 $sql = 'SELECT * FROM orders';
 $results = $dbc->query($sql);
@@ -54,6 +64,19 @@ foreach ($results as $row) {
     echo '</tr>';
 }
 
+// Approve all orders
+echo '<tr><td colspan="9">';
+echo '<form method="POST" action="approve_all.php">';
+echo '<input type="submit" name="approve_all" value="Approve All">';
+echo '</form>';
+echo '</td></tr>';
+
+// Decline all orders
+echo '<tr><td colspan="9">';
+echo '<form method="POST" action="decline_all.php">';
+echo '<input type="submit" name="decline_all" value="Decline All">';
+echo '</form>';
+echo '</td></tr>';
 
 mysqli_close($dbc); // Close the database connection.
 ?>
