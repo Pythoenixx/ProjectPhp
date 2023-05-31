@@ -1,6 +1,6 @@
 <?php
 $page_title = 'Selection Page';
-include('./includes/header.html');
+include('./includes/header.php');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $errors = [];
