@@ -1,6 +1,6 @@
 <?php
 $page_title = 'View Sales';
-include('./includes/header.html');
+include('./includes/header.php');
 ?>
 
 <h1>View Performance</h1>

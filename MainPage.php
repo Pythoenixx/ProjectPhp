@@ -1,6 +1,6 @@
 <?php
 $page_title = 'Main Page';
-session_start();
+
 ?>
 <link rel="stylesheet" type="text/css" href="includes/efek.css" />
 

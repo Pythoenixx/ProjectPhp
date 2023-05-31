@@ -1,9 +1,9 @@
 <?php
 $page_title = 'Supplier Page';
-include('./includes/header.html');
+include('./includes/header.php');
 
 require_once('mysqli.php'); // Connect to the db.
-session_start();
+
 global $dbc;
 
 $errors = [];

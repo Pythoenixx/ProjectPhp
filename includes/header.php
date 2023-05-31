@@ -8,16 +8,29 @@
 </head>
 <body>
 <div id="wrapper"><!-- Goes with the CSS layout. -->
-
+<?php
+session_start();
+$errors = [];
+if (!isset($_SESSION['role'])) {
+    $errors[] = 'Invalid role. Please log in again.';
+} else {
+    $role = $_SESSION['role'];
+}
+if ($role == 'supplier') {
+  $emoji = '👨🏻‍💼';
+} elseif ($role == 'agent') {
+  $emoji = '🤵🏿';
+}
+?>
 	<div id="content"><!-- Goes with the CSS layout. -->
 			    <nav class="navbar">
       <ul class="navbar-nav">
         <div class="all-item">
         <li class="nav-item">
-          <a href="MainPage.php" class="nav-link">
+          <a href="Profile.php" class="nav-link">
             <div class="emoji">
-            🔑</div>
-            <span class="link-text">Login</span>
+            <?php echo $emoji; ?></div>
+        <span class="link-text">Profile</span>
           </a>
         </li>
         <li class="nav-item">

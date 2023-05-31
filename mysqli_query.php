@@ -1,6 +1,6 @@
 <?php 
 $page_title = 'Retrieving Query Results';
-include ('./includes/header.html');
+include ('./includes/header.php');
 
 require_once ('mysqli.php'); // Connect to the db.
 global $dbc;

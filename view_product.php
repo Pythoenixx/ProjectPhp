@@ -1,6 +1,6 @@
 <?php
 $page_title = 'View Products';
-include('./includes/header.html');
+include('./includes/header.php');
 
 // Page header.
 echo '<h1 id="mainhead">Product List</h1>';

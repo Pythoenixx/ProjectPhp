@@ -1,10 +1,10 @@
 <?php
 $page_title = 'Check Orders';
-include('./includes/header.html');
+include('./includes/header.php');
 // Connect to the database
 require_once('mysqli.php');
 global $dbc;
-session_start();
+
 $errors = [];
 if (!isset($_SESSION['role'])) {
     $errors[] = 'Invalid role. Please log in again.';
@@ -69,105 +69,104 @@ if ($role == 'supplier') {
     mysqli_close($dbc); // Close the database connection.
 ?>
 
-    <html>
+<html>
 
-    <head>
-        <title>Order Management</title>
-    </head>
+<head>
+    <title>Order Management</title>
+</head>
 
-    <body>
-        <h1>Order Management</h1>
+<body>
+    <h1>Order Management</h1>
 
-        <form method="post" action="check_orders.php">
-            <input type="text" name="search" placeholder="Search by name, address, or phone number" size="35" maxlength="40" value="<?php echo isset($cariInfo) ? $cariInfo : ''; ?>">
-            <select name="status">
-                <option value="">All</option>
-                <option value="pending" <?php if ($statusFilter == 'pending') echo 'selected'; ?>>Pending</option>
-                <option value="approved" <?php if ($statusFilter == 'approved') echo 'selected'; ?>>Approved</option>
-                <option value="declined" <?php if ($statusFilter == 'declined') echo 'selected'; ?>>Declined</option>
-            </select>
-            <input type="submit" value="Filter">
-        </form>
+    <form method="post" action="check_orders.php">
+        <input type="text" name="search" placeholder="Search by name, address, or phone number" size="35" maxlength="40" value="<?php echo isset($cariInfo) ? $cariInfo : ''; ?>">
+        <select name="status">
+            <option value="">All</option>
+            <option value="pending" <?php if ($statusFilter == 'pending') echo 'selected'; ?>>Pending</option>
+            <option value="approved" <?php if ($statusFilter == 'approved') echo 'selected'; ?>>Approved</option>
+            <option value="declined" <?php if ($statusFilter == 'declined') echo 'selected'; ?>>Declined</option>
+        </select>
+        <input type="submit" value="Filter">
+    </form>
 
-        <table>
-            <thead>
+    <table>
+        <thead>
+            <tr>
+                <th>Order ID</th>
+                <th>Agent ID</th>
+                <th>Customer Name</th>
+                <th>Customer Address</th>
+                <th>Customer Phone Number</th>
+                <th>Product ID</th>
+                <th>Order Quantity</th>
+                <th>Status</th>
+                <?php if ($statusFilter !== 'approved' && $statusFilter !== 'declined') { ?>
+                    <th>Action</th>
+                <?php } ?>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach ($orderResults as $row) { ?>
                 <tr>
-                    <th>Order ID</th>
-                    <th>Agent ID</th>
-                    <th>Customer Name</th>
-                    <th>Customer Address</th>
-                    <th>Customer Phone Number</th>
-                    <th>Product ID</th>
-                    <th>Order Quantity</th>
-                    <th>Status</th>
+                    <td><?php echo $row['order_id']; ?></td>
+                    <td><?php echo $row['agent_id']; ?></td>
+                    <td><?php echo $row['customer_name']; ?></td>
+                    <td><?php echo $row['customer_address']; ?></td>
+                    <td><?php echo $row['customer_phone']; ?></td>
+                    <td><?php echo $row['product_id']; ?></td>
+                    <td><?php echo $row['order_quantity']; ?></td>
+                    <td><?php echo $row['status']; ?></td>
                     <?php if ($statusFilter !== 'approved' && $statusFilter !== 'declined') { ?>
-                        <th>Action</th>
+                        <td>
+                            <?php if ($row['status'] == 'PENDING') { ?>
+                                <a href="approve.php?id=<?php echo $row['order_id']; ?>">Approve</a> |
+                                <a href="decline.php?id=<?php echo $row['order_id']; ?>">Decline</a>
+                            <?php } ?>
+                        </td>
                     <?php } ?>
                 </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($orderResults as $row) { ?>
-                    <tr>
-                        <td><?php echo $row['order_id']; ?></td>
-                        <td><?php echo $row['agent_id']; ?></td>
-                        <td><?php echo $row['customer_name']; ?></td>
-                        <td><?php echo $row['customer_address']; ?></td>
-                        <td><?php echo $row['customer_phone']; ?></td>
-                        <td><?php echo $row['product_id']; ?></td>
-                        <td><?php echo $row['order_quantity']; ?></td>
-                        <td><?php echo $row['status']; ?></td>
-                        <?php if ($statusFilter !== 'approved' && $statusFilter !== 'declined' && $row['agent_id'] == $_SESSION['agent_id']) { ?>
-                            <td>
-                                <?php if ($row['status'] == 'PENDING') { ?>
-                                    <a href="approve.php?id=<?php echo $row['order_id']; ?>">Approve</a> |
-                                    <a href="decline.php?id=<?php echo $row['order_id']; ?>">Decline</a>
-                                <?php } ?>
-                            </td>
-                        <?php } ?>
-                    </tr>
+            <?php } ?>
+        </tbody>
+    </table>
+
+    <div class="pagination">
+        <?php for ($i = 1; $i <= $total_pages; $i++) { ?>
+            <a href="?page=<?php echo $i . '&search=' . urlencode($cariInfo) . '&status=' . $statusFilter; ?>">Page <?php echo $i; ?></a>
+        <?php } ?>
+    </div>
+
+    <form method="POST" action="approve_all.php">
+        <?php if ($statusFilter !== 'approved' && $statusFilter !== 'declined') { ?>
+            <label for="approve_select">Approve All:</label>
+            <select name="approve_select" id="approve_select">
+                <option value="">All</option>
+                <?php foreach ($customerNames as $customerName) { ?>
+                    <option value="<?php echo $customerName; ?>"><?php echo $customerName; ?></option>
                 <?php } ?>
-            </tbody>
-        </table>
+            </select>
+            <input type="submit" name="approve_all" value="Approve">
+        <?php } ?>
+    </form>
 
-        <div class="pagination">
-            <?php for ($i = 1; $i <= $total_pages; $i++) { ?>
-                <a href="?page=<?php echo $i . '&search=' . urlencode($cariInfo) . '&status=' . $statusFilter; ?>">Page <?php echo $i; ?></a>
-            <?php } ?>
-        </div>
+    <form method="POST" action="decline_all.php">
+        <?php if ($statusFilter !== 'approved' && $statusFilter !== 'declined') { ?>
+            <label for="decline_select">Decline All:</label>
+            <select name="decline_select" id="decline_select">
+                <option value="">All</option>
+                <?php foreach ($customerNames as $customerName) { ?>
+                    <option value="<?php echo $customerName; ?>"><?php echo $customerName; ?></option>
+                <?php } ?>
+            </select>
+            <input type="submit" name="decline_all" value="Decline">
+        <?php } ?>
+    </form>
+</body>
 
-        <form method="POST" action="approve_all.php">
-            <?php if ($statusFilter !== 'approved' && $statusFilter !== 'declined') { ?>
-                <label for="approve_select">Approve All:</label>
-                <select name="approve_select" id="approve_select">
-                    <option value="">All</option>
-                    <?php foreach ($customerNames as $customerName) { ?>
-                        <option value="<?php echo $customerName; ?>"><?php echo $customerName; ?></option>
-                    <?php } ?>
-                </select>
-                <input type="submit" name="approve_all" value="Approve">
-            <?php } ?>
-        </form>
-
-        <form method="POST" action="decline_all.php">
-            <?php if ($statusFilter !== 'approved' && $statusFilter !== 'declined') { ?>
-                <label for="decline_select">Decline All:</label>
-                <select name="decline_select" id="decline_select">
-                    <option value="">All</option>
-                    <?php foreach ($customerNames as $customerName) { ?>
-                        <option value="<?php echo $customerName; ?>"><?php echo $customerName; ?></option>
-                    <?php } ?>
-                </select>
-                <input type="submit" name="decline_all" value="Decline">
-            <?php } ?>
-        </form>
-    </body>
-
-    </html>
-
+</html>
 <?php
 include('./includes/footer.html');
-                    }else{
-                        header("Location: Order.php");
-                        exit();
-                    }
+} else {
+    header("Location: Order.php");
+    exit();
+}
 ?>
