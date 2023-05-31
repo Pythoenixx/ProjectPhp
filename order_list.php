@@ -88,45 +88,45 @@ if ($role == 'supplier') {
             <input type="submit" value="Filter">
         </form>
 
-        <table>
-            <thead>
+    <table>
+        <thead>
+            <tr>
+                <th>Order ID</th>
+                <th>Agent ID</th>
+                <th>Customer Name</th>
+                <th>Customer Address</th>
+                <th>Customer Phone Number</th>
+                <th>Product ID</th>
+                <th>Order Quantity</th>
+                <th>Status</th>
+                <?php if ($statusFilter !== 'approved' && $statusFilter !== 'declined') { ?>
+                    <th>Action</th>
+                <?php } ?>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach ($orderResults as $row) { ?>
                 <tr>
-                    <th>Order ID</th>
-                    <th>Agent ID</th>
-                    <th>Customer Name</th>
-                    <th>Customer Address</th>
-                    <th>Customer Phone Number</th>
-                    <th>Product ID</th>
-                    <th>Order Quantity</th>
-                    <th>Status</th>
+                    <td><?php echo $row['order_id']; ?></td>
+                    <td><?php echo $row['agent_id']; ?></td>
+                    <td><?php echo $row['customer_name']; ?></td>
+                    <td><?php echo $row['customer_address']; ?></td>
+                    <td><?php echo $row['customer_phone']; ?></td>
+                    <td><?php echo $row['product_id']; ?></td>
+                    <td><?php echo $row['order_quantity']; ?></td>
+                    <td><?php echo $row['status']; ?></td>
                     <?php if ($statusFilter !== 'approved' && $statusFilter !== 'declined') { ?>
-                        <th>Action</th>
+                        <td>
+                            <?php if ($row['status'] == 'PENDING') { ?>
+                                <a href="approve.php?id=<?php echo $row['order_id']; ?>">Approve</a> |
+                                <a href="decline.php?id=<?php echo $row['order_id']; ?>">Decline</a>
+                            <?php } ?>
+                        </td>
                     <?php } ?>
                 </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($orderResults as $row) { ?>
-                    <tr>
-                        <td><?php echo $row['order_id']; ?></td>
-                        <td><?php echo $row['agent_id']; ?></td>
-                        <td><?php echo $row['customer_name']; ?></td>
-                        <td><?php echo $row['customer_address']; ?></td>
-                        <td><?php echo $row['customer_phone']; ?></td>
-                        <td><?php echo $row['product_id']; ?></td>
-                        <td><?php echo $row['order_quantity']; ?></td>
-                        <td><?php echo $row['status']; ?></td>
-                        <?php if ($statusFilter !== 'approved' && $statusFilter !== 'declined') { ?>
-                            <td>
-                                <?php if ($row['status'] == 'pending') { ?>
-                                    <a href="approve.php?id=<?php echo $row['order_id']; ?>">Approve</a> |
-                                    <a href="decline.php?id=<?php echo $row['order_id']; ?>">Decline</a>
-                                <?php } ?>
-                            </td>
-                        <?php } ?>
-                    </tr>
-                <?php } ?>
-            </tbody>
-        </table>
+            <?php } ?>
+        </tbody>
+    </table>
 
         <div class="pagination">
             <?php for ($i = 1; $i <= $total_pages; $i++) { ?>
