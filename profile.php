@@ -1,6 +1,5 @@
 <?php
-session_start();
-include('./includes/header.html');
+include('./includes/header.php');
 $page_title = 'Profile Page';
 
 // Check if user is logged in, otherwise redirect to the login page
