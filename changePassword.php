@@ -9,7 +9,7 @@ if (!isset($_SESSION['username'])) {
 }
 
 $page_title = 'Change Password';
-include('./includes/header.html');
+include('./includes/header.php');
 
 $errors = array();
 
