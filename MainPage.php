@@ -54,6 +54,8 @@ if (isset($_REQUEST['submit'])) {
             $row = $result->fetch_assoc();
             $role = $row['role'];
             $_SESSION['role'] = $role;
+            $email = $row['email'];
+            $phone = isset($row['phone']) ? $row['phone'] : '';
 
             //Store the username in the session for agent change password
             $_SESSION['username'] = $row['username'];
@@ -71,7 +73,7 @@ if (isset($_REQUEST['submit'])) {
                     $_SESSION['agent_name'] = $agent_row['agent_name'];
                     $_SESSION['agent_supplier'] = $agent_row['supplier_id'];
 
-                    header("Location: agents_page.php");
+                    header("Location: profile.php");
                     exit();
                 }
             } elseif ($role === 'supplier') {
@@ -85,7 +87,7 @@ if (isset($_REQUEST['submit'])) {
                     $_SESSION['supplier_id'] = $supplier_row['supplier_id'];
                     $_SESSION['supplier_name'] = $supplier_row['supplier_name'];
 
-                    header("Location: supplier_page.php");
+                    header("Location: profile.php");
                     exit();
                 }
             }
