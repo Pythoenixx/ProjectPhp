@@ -15,7 +15,7 @@ include('./includes/header.php');
     require_once('mysqli.php');
     global $dbc;
 
-    session_start();
+    
     if (isset($_SESSION['agent_id'])) {
         $agentId = $_SESSION['agent_id'];
     } else {

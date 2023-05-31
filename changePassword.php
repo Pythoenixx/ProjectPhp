@@ -1,5 +1,5 @@
 <?php
-session_start();
+
 
 // Check if the agent is logged in
 if (!isset($_SESSION['username'])) {

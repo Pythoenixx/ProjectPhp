@@ -1,5 +1,5 @@
 <?php
-session_start();
+
 $page_title = 'Add Product';
 include('./includes/header.php');
 

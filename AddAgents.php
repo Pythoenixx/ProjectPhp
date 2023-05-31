@@ -2,7 +2,7 @@
 $page_title = 'Add New Agent';
 include('./includes/header.php');
 require_once('mysqli.php');
-session_start();
+
 
 function generateRandomPassword($length = 8)
 {

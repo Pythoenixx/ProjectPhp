@@ -3,7 +3,7 @@
     include('./includes/header.php');
     require_once('mysqli.php'); // Connect to the database.
     global $dbc;
-    session_start();
+    
     $errors = [];
     // Check for supplier id.
     if (!isset($_SESSION['agent_id'])) {
