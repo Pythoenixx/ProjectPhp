@@ -10,30 +10,7 @@ $errors = [];
 
 if (!isset($_SESSION['role'])) {
     $errors[] = 'Invalid role. Please log in again.';
-} else {
-    $role = $_SESSION['role'];
-
-    if ($role == 'supplier') {
-        // Check if the supplier has a valid agent ID
-        if (!isset($_SESSION['agent_id']) || empty($_SESSION['agent_id'])) {
-            $errors[] = 'Agent not registered. Please register an agent.';
-        } else {
-            // Check if the agent is registered with the supplier
-            $supplierId = $_SESSION['supplier_id']; // Assuming the supplier ID is stored in the session
-            $agentId = $_SESSION['agent_id'];
-
-            $agentQuery = "SELECT COUNT(*) AS agent_count FROM agents WHERE supplier_id='$supplierId' AND agent_id='$agentId'";
-            $agentResult = $dbc->query($agentQuery);
-            $agentRow = $agentResult->fetch_assoc();
-            $agentCount = $agentRow['agent_count'];
-
-            if ($agentCount == 0) {
-                $errors[] = 'Agent is not registered with this supplier.';
-            }
-        }
-    }
-}
-
+} 
 // If there are any errors, display them and exit
 if (!empty($errors)) {
     foreach ($errors as $error) {
@@ -47,7 +24,7 @@ if ($role == 'supplier') {
     function updateOrderStatus($orderId, $status)
     {
         global $dbc;
-        $supplierAgentId = $_SESSION['agent_id']; // Assuming the agent ID is stored in the session
+        $supplierAgentId = $_SESSION['agent_id'];
         $sql = "UPDATE orders SET status='$status' WHERE order_id='$orderId' AND agent_id='$supplierAgentId'";
         $dbc->query($sql);
     }
@@ -78,7 +55,10 @@ if ($role == 'supplier') {
     $startFrom = ($page - 1) * $PageLimit;
 
     // Get the total number of orders
-    $totalOrders = "SELECT COUNT(*) AS total FROM orders $clause";
+    $totalOrders = "SELECT COUNT(*) AS total FROM orders $clause 
+                    WHERE agent_id IN (
+                      SELECT agent_id FROM agents WHERE supplier_id = '{$_SESSION['supplier_id']}'
+                    )";
     $totalResult = $dbc->query($totalOrders);
     $totalRow = $totalResult->fetch_assoc();
     $totalOrder = $totalRow['total'];
@@ -87,7 +67,11 @@ if ($role == 'supplier') {
     $total_pages = ceil($totalOrder / $PageLimit);
 
     // Retrieve orders and unique customer names
-    $orderSql = "SELECT * FROM orders $clause LIMIT $startFrom, $PageLimit";
+    $orderSql = "SELECT * FROM orders $clause 
+                  WHERE agent_id IN (
+                    SELECT agent_id FROM agents WHERE supplier_id = '{$_SESSION['supplier_id']}'
+                  )
+                  LIMIT $startFrom, $PageLimit";
     $orderResults = $dbc->query($orderSql);
 
     $customerNames = array();
