@@ -41,7 +41,7 @@ $page = isset($_REQUEST['page']) ? $_REQUEST['page'] : 1;
 $startFrom = ($page - 1) * $PageLimit;
 
 // Get the total number of orders 
-$totalOrders= "SELECT COUNT(*) AS total FROM orders $clause";
+$totalOrders = "SELECT COUNT(*) AS total FROM orders $clause";
 $totalResult = $dbc->query($totalOrders);
 $totalRow = $totalResult->fetch_assoc();
 $totalOrder = $totalRow['total'];
@@ -49,9 +49,15 @@ $totalOrder = $totalRow['total'];
 // Calculate the number of pages
 $total_pages = ceil($totalOrder / $PageLimit);
 
-// ambil order yang telah difilter dan number of page
+// Retrieve orders and unique customer names
 $orderSql = "SELECT * FROM orders $clause LIMIT $startFrom, $PageLimit";
 $orderResults = $dbc->query($orderSql);
+
+$customerNames = array();
+foreach ($orderResults as $row) {
+    $customerNames[$row['customer_name']] = $row['customer_name'];
+}
+
 mysqli_close($dbc); // Close the database connection.
 ?>
 
@@ -67,7 +73,7 @@ mysqli_close($dbc); // Close the database connection.
         <select name="status">
             <option value="">All</option>
             <option value="pending" <?php if ($statusFilter == 'pending') echo 'selected'; ?>>Pending</option>
-            <option value="approved" <?php if ($statusFilter =='approved') echo 'selected'; ?>>Approved</option>
+            <option value="approved" <?php if ($statusFilter == 'approved') echo 'selected'; ?>>Approved</option>
             <option value="declined" <?php if ($statusFilter == 'declined') echo 'selected'; ?>>Declined</option>
         </select>
         <input type="submit" value="Filter">
@@ -100,9 +106,9 @@ mysqli_close($dbc); // Close the database connection.
                     <td><?php echo $row['product_id']; ?></td>
                     <td><?php echo $row['order_quantity']; ?></td>
                     <td><?php echo $row['status']; ?></td>
-                    <?php if ($statusFilter !== 'APPROVE' && $statusFilter !== 'DECLINE') { ?>
+                    <?php if ($statusFilter !== 'approved' && $statusFilter !== 'declined') { ?>
                         <td>
-                            <?php if ($row['status'] == 'PENDING') { ?>
+                            <?php if ($row['status'] == 'pending') { ?>
                                 <a href="approve.php?id=<?php echo $row['order_id']; ?>">Approve</a> |
                                 <a href="decline.php?id=<?php echo $row['order_id']; ?>">Decline</a>
                             <?php } ?>
@@ -124,8 +130,8 @@ mysqli_close($dbc); // Close the database connection.
             <label for="approve_select">Approve All:</label>
             <select name="approve_select" id="approve_select">
                 <option value="">All</option>
-                <?php foreach ($orderResults as $row) { ?>
-                    <option value="<?php echo $row['customer_name']; ?>"><?php echo $row['customer_name']; ?></option>
+                <?php foreach ($customerNames as $customerName) { ?>
+                    <option value="<?php echo $customerName; ?>"><?php echo $customerName; ?></option>
                 <?php } ?>
             </select>
             <input type="submit" name="approve_all" value="Approve">
@@ -137,8 +143,8 @@ mysqli_close($dbc); // Close the database connection.
             <label for="decline_select">Decline All:</label>
             <select name="decline_select" id="decline_select">
                 <option value="">All</option>
-                <?php foreach ($orderResults as $row) { ?>
-                    <option value="<?php echo $row['customer_name']; ?>"><?php echo $row['customer_name']; ?></option>
+                <?php foreach ($customerNames as $customerName) { ?>
+                    <option value="<?php echo $customerName; ?>"><?php echo $customerName; ?></option>
                 <?php } ?>
             </select>
             <input type="submit" name="decline_all" value="Decline">
