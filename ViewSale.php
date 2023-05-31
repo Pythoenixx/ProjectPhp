@@ -5,7 +5,7 @@ include('./includes/header.html');
 
 <h1>View Performance</h1>
 <form action="ViewSale.php" method="post">
-<label for="role">View Performance by:</label>
+    <label for="role">View Performance by:</label>
     <select name="role" id="role" onchange="this.form.submit()">
         <option value="Sales">Sales</option>
         <option value="Total">Total</option>
@@ -14,8 +14,8 @@ include('./includes/header.html');
         if ($selected != "Sales") echo "<option value='$selected' selected style='display: none;'>$selected</option>";
         ?>
     </select>
-<div <?php if ($selected == "Sales") echo "style='display: none;'"; ?>> 
-    <label for="filter">Filter by:</label>
+    <div <?php if ($selected == "Sales") echo "style='display: none;'"; ?>>
+        <label for="filter">Filter by:</label>
         <select name="filter" id="filter">
             <option value="Agents" <?php if (isset($_POST['filter']) && $_POST['filter'] == "Agents") echo "selected"; ?>>Agents</option>
             <option value="Products" <?php if (isset($_POST['filter']) && $_POST['filter'] == "Products") echo "selected"; ?>>Products</option>
@@ -87,12 +87,13 @@ if ($view_by == "Sales") {
         $filter = $_POST['filter'];
 
         if ($filter == "Agents") {
-            $query = "SELECT agents.agent_name, products.product_name, SUM(orders.order_quantity) AS total_quantity
-                      FROM agents
-                      INNER JOIN orders ON agents.agent_id = orders.agent_id
-                      INNER JOIN products ON orders.product_id = products.product_id
-                      GROUP BY agents.agent_name
-                      ORDER BY total_quantity DESC LIMIT 1";
+            $query = "SELECT agents.agent_name, GROUP_CONCAT(DISTINCT products.product_name SEPARATOR ',') AS product_name,
+            SUM(orders.order_quantity) AS total_quantity
+     FROM agents
+     INNER JOIN orders ON agents.agent_id = orders.agent_id
+     INNER JOIN products ON orders.product_id = products.product_id
+     GROUP BY agents.agent_name
+     ORDER BY total_quantity DESC";
             $title = "Agent with Highest Sale";
             $agentColumn = true;
         } elseif ($filter == "Products") {
@@ -104,12 +105,25 @@ if ($view_by == "Sales") {
             $title = "Products with Highest Sold";
             $agentColumn = false;
         } elseif ($filter == "AgentsAndProducts") {
-            $query = "SELECT agents.agent_name, products.product_name, SUM(orders.order_quantity) AS total_quantity
-                      FROM agents
-                      INNER JOIN orders ON agents.agent_id = orders.agent_id
-                      INNER JOIN products ON orders.product_id = products.product_id
-                      GROUP BY agents.agent_name, products.product_name
-                      ORDER BY total_quantity DESC LIMIT 1";
+            $query = "SELECT a.agent_name, a.product_name, a.total_quantity
+            FROM (
+              SELECT agents.agent_name, products.product_name, orders.order_quantity AS total_quantity
+              FROM agents
+              INNER JOIN orders ON agents.agent_id = orders.agent_id
+              INNER JOIN products ON orders.product_id = products.product_id
+            ) AS a
+            JOIN (
+              SELECT agent_name, MAX(total_quantity) AS max_quantity
+              FROM (
+                SELECT agents.agent_name, products.product_name, orders.order_quantity AS total_quantity
+                FROM agents
+                INNER JOIN orders ON agents.agent_id = orders.agent_id
+                INNER JOIN products ON orders.product_id = products.product_id
+              ) AS t
+              GROUP BY agent_name
+            ) AS b
+            ON a.agent_name = b.agent_name AND a.total_quantity = b.max_quantity
+            ORDER BY total_quantity DESC;";
             $title = "Agent and Product with Highest Sale";
             $agentColumn = true;
         }
