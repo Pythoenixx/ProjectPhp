@@ -160,6 +160,13 @@ if ($successMessage !== '') {
         </div>
     </p>
 </form>
+<form method="POST" action="logout.php">
+    <p>
+        <div>
+            <input type="submit" name="logout" value="Logout" class="butang-teks">
+        </div>
+    </p>
+</form>
 
 <?php
 include('./includes/footer.html');
