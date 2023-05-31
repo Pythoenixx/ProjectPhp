@@ -19,10 +19,15 @@ include('./includes/header.html');
     if (isset($_SESSION['agent_id'])) {
         $agentId = $_SESSION['agent_id'];
     } else {
-        // Redirect the user to the login page or handle authentication logic
         header('Location: MainPage.php');
         exit();
     }
+    
+    // mendapat info supplier punye agent
+    $supplierQuery = "SELECT supplier_id FROM agents WHERE agent_id = '$agentId'";
+    $supplierResult = $dbc->query($supplierQuery);
+    $supplierRow = $supplierResult->fetch_assoc();
+    $agentSupplierId = $supplierRow['supplier_id'];
     ?>
 
     <p>Customer Name: <input type="text" name="customerName" size="20" maxlength="40" value="<?php if (isset($_POST['customerName'])) echo $_POST['customerName']; ?>"></p>
@@ -32,7 +37,8 @@ include('./includes/header.html');
 
     <p>Products:</p>
     <?php
-    $productQuery = "SELECT product_id, product_name FROM products";
+    //mengambil prouduct yang hanya pada  agent punye supplier
+    $productQuery = "SELECT product_id, product_name FROM products WHERE supplier_id = '$agentSupplierId'";
     $productResult = $dbc->query($productQuery);
 
     while ($productRow = $productResult->fetch_assoc()) {
@@ -78,7 +84,7 @@ if (isset($_POST['submitted'])) {
             $errors[] = "The phone number must be a number.";
         }
     }
-
+    // Check if the date is empty
     if (empty($_POST['date'])) {
         $errors[] = "You forgot to enter the date.";
     }
@@ -101,8 +107,8 @@ if (isset($_POST['submitted'])) {
             $productResult = $dbc->query($productQuery);
             $product = $productResult->fetch_assoc();
 
-            // If the product is in stock, create the order
-            if ($product && $product['quantity'] >= $_POST['productQuantity'][$productId]) {
+              // untuk mengechek product itu milik agent punye supplier atau tidak
+            if ($product && $product['supplier_id'] == $agentSupplierId && $product['quantity'] >= $_POST['productQuantity'][$productId]) {
                 // Insert the order into the database
                 $customerName = $_POST['customerName'];
                 $customerAddress = $_POST['customerAddress'];
@@ -110,7 +116,7 @@ if (isset($_POST['submitted'])) {
                 $orderDate = $_POST['date'];
                 $productQuantity = $_POST['productQuantity'][$productId];
 
-                $sql = "INSERT INTO orders (agent_id, customer_name, customer_address, customer_phone, order_date, product_id, order_quantity, status) VALUES ('$agentId', '$customerName', '$customerAddress', '$customerPhone', '$orderDate', '$productId', '$productQuantity', 'pending')";
+                $sql = "INSERT INTO orders (agent_id, customer_name, customer_address, customer_phone, order_date, product_id, order_quantity, status) VALUES ('$agentId', '$customerName', '$customerAddress', '$customerPhone', '$orderDate', '$productId', '$productQuantity', 'PENDING')";
                 $stmt = $dbc->prepare($sql);
                 $stmt->execute();
 
@@ -122,7 +128,7 @@ if (isset($_POST['submitted'])) {
                 echo '<p>Order created for product: ' . $product['product_name'] . '</p>';
             } else {
                 echo '<h1>Error!</h1>
-                <p class="error">The product ' . $product['product_name'] . ' is out of stock. We apologize for any inconvenience.</p>';
+                <p class="error">The product ' . $product['product_name'] . ' is out of stock or does not belong to your supplier. We apologize for any inconvenience.</p>';
             }
         }
     }
