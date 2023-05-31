@@ -13,7 +13,7 @@ if (isset($_REQUEST['id'])) {
     $orderId = $_REQUEST['id'];
 
     // Update the order status in the database to 'approved'
-    $sql = "UPDATE orders SET status = 'Approved' WHERE order_id = $orderId";
+    $sql = "UPDATE orders SET status = 'APPROVED' WHERE order_id = $orderId";
     $dbc->query($sql);
 
     // Perform any necessary actions for order approval
@@ -26,9 +26,5 @@ if (isset($_REQUEST['id'])) {
     header('Location: error.php');
     exit;
 }
-?>
-
-
-<?php
 include('./includes/footer.html');
 ?>

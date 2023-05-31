@@ -108,7 +108,7 @@ mysqli_close($dbc); // Close the database connection.
                     <td><?php echo $row['status']; ?></td>
                     <?php if ($statusFilter !== 'approved' && $statusFilter !== 'declined') { ?>
                         <td>
-                            <?php if ($row['status'] == 'pending') { ?>
+                            <?php if ($row['status'] == 'PENDING') { ?>
                                 <a href="approve.php?id=<?php echo $row['order_id']; ?>">Approve</a> |
                                 <a href="decline.php?id=<?php echo $row['order_id']; ?>">Decline</a>
                             <?php } ?>
@@ -156,3 +156,4 @@ mysqli_close($dbc); // Close the database connection.
 <?php
 include('./includes/footer.html');
 ?>
+
