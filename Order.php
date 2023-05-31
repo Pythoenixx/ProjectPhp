@@ -1,6 +1,6 @@
 <?php
 $page_title = 'Make Order';
-include('./includes/header.html');
+include('./includes/header.php');
 ?>
 
 <html>
