@@ -1,6 +1,6 @@
 <?php
 $page_title = 'Approval';
-include('./includes/header.html');
+include('./includes/header.php');
 ?>
 
 <?php
