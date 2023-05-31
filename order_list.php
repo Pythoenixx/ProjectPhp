@@ -164,5 +164,8 @@ if ($role == 'supplier') {
     </html>
 <?php
     include('./includes/footer.html');
+} else {
+    header("Location: Order.php");
+    exit();
 }
 ?>
