@@ -51,7 +51,7 @@ if ($num > 0) { // If it ran OK, display the records.
                 <span></span>
                 <span></span>
                 <span></span>
-    <input type="submit" name="update" value="UPDATE PRODUCT" class="butang-teks">
+                <input type="submit" name="update" value="UPDATE PRODUCT" class="butang-teks">
             </div>
         </div>
     </form>
