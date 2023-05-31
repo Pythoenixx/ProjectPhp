@@ -1,6 +1,6 @@
 <?php
     $page_title = 'View Products';
-    include('./includes/header.html');
+    include('./includes/header.php');
     require_once('mysqli.php'); // Connect to the database.
     global $dbc;
     session_start();
