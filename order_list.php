@@ -160,13 +160,7 @@ if ($role == 'supplier') {
             <?php } ?>
         </form>
     </body>
-
     </html>
-
 <?php
-    include('./includes/footer.html');
-} else {
-    header("Location: Order.php");
-    exit();
-}
+include('./includes/footer.html');
 ?>
