@@ -114,7 +114,7 @@ if (isset($_POST['submitted'])) {
                 $stmt = $dbc->prepare($sql);
                 $stmt->execute();
 
-                // Update the product quantity
+                // Update product quantity
                 $newQuantity = $product['quantity'] - $productQuantity;
                 $updateQuery = "UPDATE products SET quantity = '$newQuantity' WHERE product_id = '$productId'";
                 $dbc->query($updateQuery);
@@ -126,6 +126,7 @@ if (isset($_POST['submitted'])) {
             }
         }
     }
+    echo'<p>Waiting for supplier approval.</p>';
 
     mysqli_close($dbc); // Close the database connection.
 }
