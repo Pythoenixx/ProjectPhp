@@ -34,6 +34,7 @@ if ($result->num_rows > 0) {
 
     if ($role === 'agent') {
         // Retrieve agent data
+        if (isset($row['agent_id'])) { // Check if 'agent_id' key exists in $row array
         $query = "SELECT * FROM agents WHERE agent_id='$row[agent_id]'";
         $result = $dbc->query($query);
         if ($result->num_rows > 0) {
@@ -43,6 +44,7 @@ if ($result->num_rows > 0) {
             $contactEmail = $row['contact_email'];
             $contactPhone = $row['contact_phone'];
         }
+    }
     } elseif ($role === 'supplier') {
         // Retrieve supplier data
         if (isset($row['supplier_id'])) { // Check if 'supplier_id' key exists in $row array
