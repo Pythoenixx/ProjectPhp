@@ -53,6 +53,7 @@ if (isset($_REQUEST['submit'])) {
         if ($result->num_rows > 0) {
             $row = $result->fetch_assoc();
             $role = $row['role'];
+            $_SESSION['role'] = $role;
             $email = $row['email'];
             $phone = isset($row['phone']) ? $row['phone'] : '';
 
@@ -63,12 +64,14 @@ if (isset($_REQUEST['submit'])) {
             if ($role === 'agent') {
                 // Get the agent's ID from the agents table
                 $agent_username = $row['username'];
-                $query = "SELECT agent_id FROM agents WHERE agent_name='$agent_username'";
+                $query = "SELECT * FROM agents WHERE agent_name='$agent_username'";
                 $result = $dbc->query($query);
 
                 if ($result->num_rows > 0) {
                     $agent_row = $result->fetch_assoc();
                     $_SESSION['agent_id'] = $agent_row['agent_id'];
+                    $_SESSION['agent_name'] = $agent_row['agent_name'];
+                    $_SESSION['agent_supplier'] = $agent_row['supplier_id'];
 
                     header("Location: profile.php");
                     exit();
@@ -76,12 +79,13 @@ if (isset($_REQUEST['submit'])) {
             } elseif ($role === 'supplier') {
                 // Get the supplier's ID from the suppliers table
                 $supplier_username = $row['username'];
-                $query = "SELECT supplier_id FROM suppliers WHERE supplier_name='$supplier_username'";
+                $query = "SELECT * FROM suppliers WHERE supplier_name='$supplier_username'";
                 $result = $dbc->query($query);
 
                 if ($result->num_rows > 0) {
                     $supplier_row = $result->fetch_assoc();
                     $_SESSION['supplier_id'] = $supplier_row['supplier_id'];
+                    $_SESSION['supplier_name'] = $supplier_row['supplier_name'];
 
                     header("Location: profile.php");
                     exit();
