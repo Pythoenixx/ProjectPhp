@@ -1,6 +1,6 @@
 <?php
 $page_title = 'View Agents';
-include('./includes/header.html');
+include('./includes/header.php');
 
 // Page header
 echo '<h1 id="mainhead">Registered Agents</h1>';

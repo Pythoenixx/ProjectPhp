@@ -1,6 +1,6 @@
 <?php
 $page_title = 'Make Order';
-include('./includes/header.html');
+include('./includes/header.php');
 ?>
 
 <html>
@@ -15,7 +15,7 @@ include('./includes/header.html');
     require_once('mysqli.php');
     global $dbc;
 
-    session_start();
+    
     if (isset($_SESSION['agent_id'])) {
         $agentId = $_SESSION['agent_id'];
     } else {
