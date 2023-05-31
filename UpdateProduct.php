@@ -6,7 +6,7 @@ require_once('mysqli.php'); // Connect to the db.
 
 global $dbc;
 
-$query0 = "SELECT product_id, product_name, product_description, price, cost FROM products";
+$query0 = "SELECT product_id, product_name, product_description, price, cost, quantity FROM products";
 $result = mysqli_query($dbc, $query0); // Run the query.
 $num = mysqli_num_rows($result) OR die('SQL Statement: ' . mysqli_error($dbc));
 
@@ -22,6 +22,7 @@ if ($num > 0) { // If it ran OK, display the records.
             <td align="left"><b>Product Description</b></td>
             <td align="left"><b>Price</b></td>
             <td align="left"><b>Cost</b></td>
+            <td align="left"><b>quantity</b></td>
         </tr>';
 
     // Fetch and print all the records.
@@ -32,9 +33,9 @@ if ($num > 0) { // If it ran OK, display the records.
             <td align="left">' . $row['product_description'] . '</td>
             <td align="left">' . $row['price'] . '</td>
             <td align="left">' . $row['cost'] . '</td>
-            <td align="left">
+            <td align="left">'  . $row['quantity'] . '</td>
                 
-            </td>
+            
         </tr>';
     }
 
