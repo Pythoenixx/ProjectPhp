@@ -29,7 +29,7 @@ $page_title = 'Main Page';
 <?php
 require_once('mysqli.php'); // Connect to the db.
 global $dbc;
-
+session_start();
 $errors = [];
 
 if (isset($_REQUEST['submit'])) {
