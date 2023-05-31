@@ -29,7 +29,7 @@ if ($role == 'supplier') {
         if (empty($errors)) { // Make the query.
             $query = "SELECT agent_id, agent_name, contact_name, contact_email, contact_phone, supplier_id FROM agents WHERE supplier_id = $supplier_id ORDER BY agent_id ASC";
             $result = @mysqli_query($dbc, $query); // Run the query.
-            $num = @mysqli_num_rows($result) or die('SQL Statement: ' . mysqli_error($dbc));
+            $num = @mysqli_num_rows($result);
 
             if ($num > 0) { // If it ran OK, display the records.
 
@@ -55,7 +55,7 @@ if ($role == 'supplier') {
 
                 @mysqli_free_result($result); // Free up the resources.
             } else { // If it did not run OK.
-                echo '<p class="error">There are currently no registered agents.</p>';
+            echo '<p class="error">There are currently no registered agents under you.</p>';
             }
 
             @mysqli_close($dbc); // Close the database connection.
