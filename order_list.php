@@ -1,6 +1,6 @@
 <?php
 $page_title = 'Check Orders';
-include('./includes/header.html');
+include('./includes/header.php');
 // Connect to the database
 require_once('mysqli.php');
 global $dbc;
