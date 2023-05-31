@@ -1,5 +1,4 @@
 <?php
-if (true) {
     $page_title = 'View Products';
     include('./includes/header.html');
     require_once('mysqli.php'); // Connect to the database.
@@ -81,5 +80,4 @@ if (true) {
 
 <?php
     include('./includes/footer.html'); // Include the HTML footer.
-}
 ?>
