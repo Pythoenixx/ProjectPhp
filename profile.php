@@ -15,11 +15,8 @@ global $dbc;
 // Initialize variables
 $email = "";
 $phone = "";
-$agentName = "";
 $supplierName = "";
-$contactName = "";
-$contactEmail = "";
-$contactPhone = "";
+$agentName = "";
 
 // Retrieve user data
 $username = $_SESSION['username'];
@@ -30,33 +27,27 @@ if ($result->num_rows > 0) {
     $row = $result->fetch_assoc();
     $email = $row['email'];
     $phone = $row['phone_number'];
-    $role = $row['role'];
+}
 
-    if ($role === 'agent') {
-        // Retrieve agent data
-        if (isset($row['agent_id'])) { // Check if 'agent_id' key exists in $row array
-        $query = "SELECT * FROM agents WHERE agent_id='$row[agent_id]'";
-        $result = $dbc->query($query);
-        if ($result->num_rows > 0) {
-            $row = $result->fetch_assoc();
-            $agentName = $row['agent_name'];
-            $contactName = $row['contact_name'];
-            $contactEmail = $row['contact_email'];
-            $contactPhone = $row['contact_phone'];
-        }
-    }
-    } elseif ($role === 'supplier') {
-        // Retrieve supplier data
-        if (isset($row['supplier_id'])) { // Check if 'supplier_id' key exists in $row array
-            $query = "SELECT * FROM suppliers WHERE supplier_id='$row[supplier_id]'";
-            $result = $dbc->query($query);
-            if ($result->num_rows > 0) {
-                $row = $result->fetch_assoc();
-                $supplierName = $row['supplier_name'];
-                $contactName = $row['contact_name'];
-                $contactEmail = $row['contact_email'];
-                $contactPhone = $row['contact_phone'];
-            }
+// Retrieve supplier or agent data based on the user's role
+$query = "";
+if ($_SESSION['role'] === 'supplier') {
+    $query = "SELECT * FROM suppliers WHERE supplier_name='$username'";
+} elseif ($_SESSION['role'] === 'agent') {
+    $query = "SELECT * FROM agents WHERE agent_name='$username'";
+}
+
+if ($query !== "") {
+    $result = $dbc->query($query);
+
+    if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        if ($_SESSION['role'] === 'supplier') {
+            $supplierEmail = $row['contact_email'];
+            $supplierPhone = $row['contact_phone'];
+        } elseif ($_SESSION['role'] === 'agent') {
+            $agentEmail = $row['contact_email'];
+            $agentPhone = $row['contact_phone'];
         }
     }
 }
@@ -93,50 +84,38 @@ if (isset($_POST['update'])) {
     }
 
     // Check if the new username or email already exists
-    $query = "SELECT * FROM users WHERE username='$newUsername' OR email='$newEmail'";
+    $query = "SELECT * FROM users WHERE (username='$newUsername' OR email='$newEmail') AND username != '$username'";
     $result = $dbc->query($query);
 
     if ($result->num_rows > 0) {
-        $row = $result->fetch_assoc();
-
-        // Check if the existing username is the same as the current user's username
-        if ($row['username'] !== $username) {
-            $errors[] = "Username already exists.";
-        }
-
-        // Check if the existing email is the same as the current user's email
-        if ($row['email'] !== $email) {
-            $errors[] = "Email already exists.";
-        }
+        $errors[] = "Username or email already exists.";
     }
 
     if (count($errors) === 0) {
+        // Update supplier or agent data in the database based on the user's role
+        if ($_SESSION['role'] === 'supplier') {
+            $query = "UPDATE suppliers SET supplier_name='$newUsername', contact_email='$newEmail', contact_phone='$newPhone' WHERE supplier_name='$username'";
+        } elseif ($_SESSION['role'] === 'agent') {
+            $query = "UPDATE agents SET agent_name='$newUsername', contact_email='$newEmail', contact_phone='$newPhone' WHERE agent_name='$username'";
+        }
+        $dbc->query($query);
+
         // Update user data in the database
         $query = "UPDATE users SET username='$newUsername', email='$newEmail', phone_number='$newPhone', password='$newPassword' WHERE username='$username'";
         $dbc->query($query);
-    
-        // Update agent data in the database
-        if ($role === 'agent') {
-            // Update agent data in the database using the username
-            $query = "UPDATE agents SET agent_name='$newUsername', contact_email='$newEmail', contact_phone='$newPhone' WHERE agent_name='$username'";
-            $dbc->query($query);
-        }
-    
-        // Update supplier data in the database
-        if ($role === 'supplier') {
-            // Update supplier data in the database using the username
-            $query = "UPDATE suppliers SET supplier_name='$newUsername', contact_email='$newEmail', contact_phone='$newPhone' WHERE supplier_id='$row[supplier_id]'";
-            $dbc->query($query);
-        }
-    
+
         // Set the success message
         $successMessage = "Profile updated successfully.";
-    
+
+        // Update the session username if it was changed
+        if ($newUsername !== $username) {
+            $_SESSION['username'] = $newUsername;
+        }
+
         // Redirect to the profile page after successful update
         header("Location: profile.php");
         exit();
     }
-    
 }
 
 $dbc->close();
@@ -152,27 +131,38 @@ if ($successMessage !== '') {
 ?>
 
 <form method="POST" action="profile.php">
-    <div>
-        <label>Username:</label>
-        <input type="text" name="newUsername" value="<?php echo $username; ?>" >
-    </div>
-    <div>
-        <label>Email:</label>
-        <input type="email" name="newEmail" value="<?php echo $email; ?>" >
-    </div>
-    <div>
-        <label>Phone number:</label>
-        <input type="text" name="newPhone" value="<?php echo $phone; ?>" >
-    </div>
-    <div>
-        <label>New Password:</label>
-        <input type="password" name="newPassword" >
-    </div>
-    <div>
-    <input type="submit" name="update" value="Updates" class="butang-teks">
-    </div>
+    <p>
+        <div>
+            <label>Username:</label>
+            <input type="text" name="newUsername" value="<?php echo $username; ?>">
+        </div>
+    </p>
+    <p>
+        <div>
+            <label>Email:</label>
+            <input type="email" name="newEmail" value="<?php echo $email; ?>">
+        </div>
+    </p>
+    <p>
+        <div>
+            <label>Phone number:</label>
+            <input type="text" name="newPhone" value="<?php echo $phone; ?>">
+        </div>
+    </p>
+    <p>
+        <div>
+            <label>New Password:</label>
+            <input type="password" name="newPassword">
+        </div>
+    </p>
+    <p>
+        <div>
+            <input type="submit" name="update" value="Update" class="butang-teks">
+        </div>
+    </p>
 </form>
 
 <?php
 include('./includes/footer.html');
 ?>
+
