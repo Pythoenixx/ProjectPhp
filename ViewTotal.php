@@ -1,6 +1,6 @@
 <?php
 $page_title = 'View Total Performance';
-include('./includes/header.html');
+include('./includes/header.php');
 ?>
 
 <h1>View Data</h1>
