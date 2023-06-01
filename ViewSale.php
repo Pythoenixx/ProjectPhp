@@ -38,10 +38,7 @@ if (isset($selected)) {
     require_once('mysqli.php');
     global $dbc;
 
-    $view_by = $selected;
-    if ($view_by == "Total") {
-
-        $s = mysqli_query($dbc, "SELECT orders.order_id, orders.order_date, orders.order_quantity, orders.product_id, orders.agent_id, products.cost, products.price from orders 
+    $s = mysqli_query($dbc, "SELECT orders.order_id, orders.order_date, orders.order_quantity, orders.product_id, orders.agent_id, products.cost, products.price from orders 
         INNER JOIN products on orders.product_id = products.product_id 
         WHERE status='approved'");
         $num = @mysqli_num_rows($s);
@@ -74,7 +71,11 @@ if (isset($selected)) {
                     echo 'Error: Unable to insert data into the sales table.';
                 }
             }
-        } 
+        }
+    $view_by = $selected;
+    if ($view_by == "Total") {
+
+         
         // Retrieve the sales data from the database
         $query = "SELECT sales.sales_id, sales.sales_date, sales.quantity_sold, sales.commission, sales.profit, sales.total_sell, sales.net_amount, orders.order_id, products.product_id, agents.agent_id, agents.supplier_id
           FROM sales
