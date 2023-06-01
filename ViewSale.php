@@ -14,28 +14,36 @@ include('./includes/header.php');
         if ($selected != "Sales") echo "<option value='$selected' selected style='display: none;'>$selected</option>";
         ?>
     </select>
-    <div <?php if ($selected == "Sales") echo "style='display: none;'"; ?>>
+    <div <?php if ($selected == "Total") echo "style='display: none;'"; ?>>
         <label for="filter">Filter by:</label>
         <select name="filter" id="filter">
             <option value="Agents" <?php if (isset($_POST['filter']) && $_POST['filter'] == "Agents") echo "selected"; ?>>Agents</option>
             <option value="Products" <?php if (isset($_POST['filter']) && $_POST['filter'] == "Products") echo "selected"; ?>>Products</option>
             <option value="AgentsAndProducts" <?php if (isset($_POST['filter']) && $_POST['filter'] == "AgentsAndProducts") echo "selected"; ?>>Agents and Products</option>
         </select>
-        <button type="submit">View</button> eww button
+        <button type="submit">View</button>
     </div>
 
 </form>
 
 <?php
+
+if (!isset($_SESSION['supplier_id'])) {
+    $errors[] = 'Invalid supplier ID. Please log in again.';
+} else {
+    $supplier_id = $_SESSION['supplier_id'];
+}
 // Include the database connection file
 if (isset($selected)) {
     require_once('mysqli.php');
     global $dbc;
 
     $view_by = $selected;
-    if ($view_by == "Sales") {
+    if ($view_by == "Total") {
 
-        $s = mysqli_query($dbc, "SELECT orders.order_id, orders.order_date, orders.order_quantity, orders.product_id, orders.agent_id, products.cost, products.price from orders INNER JOIN products on orders.product_id = products.product_id WHERE status='approved'");
+        $s = mysqli_query($dbc, "SELECT orders.order_id, orders.order_date, orders.order_quantity, orders.product_id, orders.agent_id, products.cost, products.price from orders 
+        INNER JOIN products on orders.product_id = products.product_id 
+        WHERE status='approved'");
         $num = @mysqli_num_rows($s);
 
         if ($num > 0) {
@@ -68,17 +76,18 @@ if (isset($selected)) {
             }
         } 
         // Retrieve the sales data from the database
-        $query = "SELECT sales.sales_id, sales.sales_date, sales.quantity_sold, sales.commission, sales.profit, sales.total_sell, sales.net_amount, orders.order_id, products.product_id, agents.agent_id
+        $query = "SELECT sales.sales_id, sales.sales_date, sales.quantity_sold, sales.commission, sales.profit, sales.total_sell, sales.net_amount, orders.order_id, products.product_id, agents.agent_id, agents.supplier_id
           FROM sales
           INNER JOIN orders ON sales.order_id = orders.order_id
           INNER JOIN products ON sales.product_id = products.product_id
-          INNER JOIN agents ON sales.agent_id = agents.agent_id";
+          INNER JOIN agents ON sales.agent_id = agents.agent_id 
+          WHERE agents.supplier_id = $supplier_id";
         $result = $dbc->query($query);
 
         // Check if there are any sales records
         if ($result->num_rows > 0) {
             // Display the sales data in a table
-            echo '<table>
+    echo '<table align="center">
             <tr>
                 <th>Sale ID</th>
                 <th>Quantity Sold</th>
@@ -124,6 +133,7 @@ if (isset($selected)) {
      FROM agents
      INNER JOIN orders ON agents.agent_id = orders.agent_id
      INNER JOIN products ON orders.product_id = products.product_id
+     WHERE agents.supplier_id = $supplier_id AND orders.status = 'DELIVERED'
      GROUP BY agents.agent_name
      ORDER BY total_quantity DESC";
                 $title = "Agent with Highest Sale";
@@ -132,30 +142,23 @@ if (isset($selected)) {
                 $query = "SELECT products.product_name, SUM(orders.order_quantity) AS total_quantity
                       FROM products
                       INNER JOIN orders ON products.product_id = orders.product_id
+                      WHERE products.supplier_id = $supplier_id AND orders.status = 'DELIVERED'
                       GROUP BY products.product_name
                       ORDER BY total_quantity DESC";
                 $title = "Products with Highest Sold";
                 $agentColumn = false;
             } elseif ($filter == "AgentsAndProducts") {
-                $query = "SELECT a.agent_name, a.product_name, a.total_quantity
-            FROM (
-              SELECT agents.agent_name, products.product_name, orders.order_quantity AS total_quantity
-              FROM agents
-              INNER JOIN orders ON agents.agent_id = orders.agent_id
-              INNER JOIN products ON orders.product_id = products.product_id
-            ) AS a
-            JOIN (
-              SELECT agent_name, MAX(total_quantity) AS max_quantity
-              FROM (
-                SELECT agents.agent_name, products.product_name, orders.order_quantity AS total_quantity
-                FROM agents
-                INNER JOIN orders ON agents.agent_id = orders.agent_id
-                INNER JOIN products ON orders.product_id = products.product_id
-              ) AS t
-              GROUP BY agent_name
-            ) AS b
-            ON a.agent_name = b.agent_name AND a.total_quantity = b.max_quantity
-            ORDER BY total_quantity DESC;";
+                $query = "SELECT agent_name, product_name, order_quantity AS total_quantity
+                FROM (
+                  SELECT agents.agent_name, products.product_name, orders.order_quantity,
+                  MAX(orders.order_quantity) OVER (PARTITION BY agents.agent_id) AS max_quantity
+                  FROM agents
+                  INNER JOIN orders ON agents.agent_id = orders.agent_id
+                  INNER JOIN products ON orders.product_id = products.product_id
+                  WHERE agents.supplier_id = $supplier_id AND orders.status = 'DELIVERED'
+                ) AS t
+                WHERE order_quantity = max_quantity
+                ORDER BY total_quantity DESC";
                 $title = "Agent and Product with Highest Sale";
                 $agentColumn = true;
             }
