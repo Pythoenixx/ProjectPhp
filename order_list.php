@@ -10,36 +10,13 @@ $errors = [];
 
 if (!isset($_SESSION['role'])) {
     $errors[] = 'Invalid role. Please log in again.';
-} else {
-    $role = $_SESSION['role'];
-
-    if ($role == 'supplier') {
-        // Check if the supplier has a valid agent ID
-        if (!isset($_SESSION['agent_id']) || empty($_SESSION['agent_id'])) {
-            $errors[] = 'Agent not registered. Please register an agent.';
-        } else {
-            // Check if the agent is registered with the supplier
-            $supplierId = $_SESSION['supplier_id']; // Assuming the supplier ID is stored in the session
-            $agentId = $_SESSION['agent_id'];
-
-            $agentQuery = "SELECT COUNT(*) AS agent_count FROM agents WHERE supplier_id='$supplierId' AND agent_id='$agentId'";
-            $agentResult = $dbc->query($agentQuery);
-            $agentRow = $agentResult->fetch_assoc();
-            $agentCount = $agentRow['agent_count'];
-
-            if ($agentCount == 0) {
-                $errors[] = 'Agent is not registered with your supplier.';
-            }
-        }
-    }
-}
-
+} 
 // If there are any errors, display them and exit
 if (!empty($errors)) {
     foreach ($errors as $error) {
         echo $error . '<br>';
-   }
- exit();
+    }
+    exit();
 }
 
 if ($role == 'supplier') {
