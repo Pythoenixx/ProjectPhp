@@ -77,11 +77,16 @@ if (isset($_POST['submit'])) {
     } else {
         $cost = $_POST['cost'];
     }
+    if (empty($_POST['quantity'])) {
+        $errors[] = 'You forgot to enter quantity.';
+    } else {
+        $quantity = $_POST['quantity'];
+    }
 
     if (empty($errors)) {
         // Update the product details in the database
         $query = "UPDATE products SET product_name = '$product_name', product_description = '$product_description', 
-              price = '$price', cost = '$cost' WHERE product_id = $product_id";
+              price = '$price', cost = '$cost', quantity = '$quantity' WHERE product_id = $product_id";
         $result = mysqli_query($dbc, $query);
 
         if ($result) {
@@ -114,6 +119,7 @@ if (isset($_POST['logout'])) {
     <p><input type="text" name="product_description" placeholder="Product Description" value="<?php if (isset($_POST['product_description'])) echo $_POST['product_description']; ?>"></p>
     <p><input type="text" name="price" placeholder="Price" value="<?php if (isset($_POST['price'])) echo $_POST['price']; ?>"></p>
     <p><input type="text" name="cost" placeholder="Cost" value="<?php if (isset($_POST['cost'])) echo $_POST['cost']; ?>"></p>
+    <p><input type="text" name="quantity" placeholder="Quantity" value="<?php if (isset($_POST['quantity'])) echo $_POST['quantity']; ?>"></p>
     <p><input type="submit" name="submit" value="Update"></p>
     <input type="submit" name="refresh" value="Refresh">
     <p><input type="submit" name="logout" value="Logout"></p>
