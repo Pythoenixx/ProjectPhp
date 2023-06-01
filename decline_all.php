@@ -3,33 +3,31 @@
 require_once('mysqli.php');
 global $dbc;
 
-// Check if the form is submitted and the "Decline All" button is clicked
+// check kalu buton dah submit ?
 if (isset($_POST['decline_all'])) {
-    // Get the selected customer name
-    $selectCustomer = isset($_POST['decline_select']) ? $_POST['decline_select'] : '';
+    // Retrieve the order details
+    $sql = "SELECT order_id, product_id, order_quantity FROM orders WHERE status='PENDING'";
+    $result = $dbc->query($sql);
 
-    // Update the status for the selected customer(s)
-    if ($selectCustomer === '') {
-        // kalau all statement selected semua akan diifect
-        $sql = "UPDATE orders SET status='DECLINE' WHERE status='PENDING'";
-    } else {
-        // Update status for the selected customer
-        $selectCustomer = mysqli_real_escape_string($dbc, $selectCustomer);
-        $sql = "UPDATE orders SET status='DECLINE' WHERE customer_name='$selectCustomer' AND status='PENDING'";
-    }
+    // Loop through each order
+    while ($row = $result->fetch_assoc()) {
+        $orderId = $row['order_id'];
+        $productId = $row['product_id'];
+        $orderQuantity = $row['order_quantity'];
 
-    // Execute the SQL query
-    if ($dbc->query($sql) === false) {
-        // Handle query error
-        echo "Error: " . $dbc->error;
-        exit();
+        // Update order status to 'DECLINED'
+        $updateOrderSql = "UPDATE orders SET status='DECLINED' WHERE order_id=$orderId";
+        $dbc->query($updateOrderSql);
+
+        // Add back the order quantity to the product
+        $updateProductSql = "UPDATE products SET quantity = quantity + $orderQuantity WHERE product_id=$productId";
+        $dbc->query($updateProductSql);
     }
 
     mysqli_close($dbc); // Close the database connection.
 
-    // Redirect to the order management page
+    // Redirect to the order_list page
     header('Location: order_list.php');
     exit();
 }
-
 ?>

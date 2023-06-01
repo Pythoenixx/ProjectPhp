@@ -3,15 +3,25 @@
 require_once('mysqli.php');
 global $dbc;
 
-// Retrieve the order ID from the URL parameter
+// ambil url dari order id
 if (isset($_REQUEST['id'])) {
     $orderId = $_REQUEST['id'];
 
-    // Update the order status in the database to 'declined'
+    // Retrieve the product ID and order quantity from the order
+    $sql = "SELECT product_id, order_quantity FROM orders WHERE order_id = $orderId";
+    $result = $dbc->query($sql);
+    $row = $result->fetch_assoc();
+    $productId = $row['product_id'];
+    $orderQuantity = $row['order_quantity'];
+
+    // Update the order status 
     $sql = "UPDATE orders SET status = 'DECLINED' WHERE order_id = $orderId";
     $dbc->query($sql);
 
-    // Perform any necessary actions for order decline
+    // Increase the product quantity in the database by the order quantity
+    $sql = "UPDATE products SET quantity = quantity + $orderQuantity WHERE product_id = $productId";
+    $dbc->query($sql);
+
 
     // Redirect back to the order management page
     header('Location: order_list.php');

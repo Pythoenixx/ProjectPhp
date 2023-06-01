@@ -11,6 +11,7 @@ $errors = [];
 if (!isset($_SESSION['role'])) {
     $errors[] = 'Invalid role. Please log in again.';
 } 
+
 // If there are any errors, display them and exit
 if (!empty($errors)) {
     foreach ($errors as $error) {
@@ -28,6 +29,7 @@ if ($role == 'supplier') {
         $sql = "UPDATE orders SET status='$status' WHERE order_id='$orderId' AND agent_id='$supplierAgentId'";
         $dbc->query($sql);
     }
+
     // Search
     $cariInfo = isset($_REQUEST['search']) ? $_REQUEST['search'] : '';
 
@@ -37,16 +39,11 @@ if ($role == 'supplier') {
     // WHERE clause for the filters
     $clause = '';
     if (!empty($cariInfo)) {
-        $clause .= "WHERE customer_name LIKE '%$cariInfo%' OR customer_address LIKE '%$cariInfo%' OR customer_phone LIKE '%$cariInfo%'";
+        $clause .= "AND (customer_name LIKE '%$cariInfo%' OR customer_address LIKE '%$cariInfo%' OR customer_phone LIKE '%$cariInfo%')";
     }
 
     if (!empty($statusFilter)) {
-        if (!empty($clause)) {
-            $clause .= ' AND ';
-        } else {
-            $clause .= 'WHERE ';
-        }
-        $clause .= "status = '$statusFilter'";
+        $clause .= "AND status = '$statusFilter'";
     }
 
     // Pagination code
@@ -55,10 +52,10 @@ if ($role == 'supplier') {
     $startFrom = ($page - 1) * $PageLimit;
 
     // Get the total number of orders
-    $totalOrders = "SELECT COUNT(*) AS total FROM orders $clause 
+    $totalOrders = "SELECT COUNT(*) AS total FROM orders 
                     WHERE agent_id IN (
                       SELECT agent_id FROM agents WHERE supplier_id = '{$_SESSION['supplier_id']}'
-                    )";
+                    ) $clause";
     $totalResult = $dbc->query($totalOrders);
     $totalRow = $totalResult->fetch_assoc();
     $totalOrder = $totalRow['total'];
@@ -67,10 +64,10 @@ if ($role == 'supplier') {
     $total_pages = ceil($totalOrder / $PageLimit);
 
     // Retrieve orders and unique customer names
-    $orderSql = "SELECT * FROM orders $clause 
+    $orderSql = "SELECT * FROM orders 
                   WHERE agent_id IN (
                     SELECT agent_id FROM agents WHERE supplier_id = '{$_SESSION['supplier_id']}'
-                  )
+                  ) $clause
                   LIMIT $startFrom, $PageLimit";
     $orderResults = $dbc->query($orderSql);
 
@@ -91,35 +88,34 @@ if ($role == 'supplier') {
 <body>
     <h1>Order Management</h1>
 
-    <form method="post" action="check_orders.php">
+    <form method="post">
         <input type="text" name="search" placeholder="Search by name, address, or phone number" size="35" maxlength="40" value="<?php echo isset($cariInfo) ? $cariInfo : ''; ?>">
         <select name="status">
             <option value="">All</option>
-            <option value="pending" <?php if ($statusFilter == 'pending') echo 'selected'; ?>>Pending</option>
-            <option value="approved" <?php if ($statusFilter == 'approved') echo 'selected'; ?>>Approved</option>
-            <option value="declined" <?php if ($statusFilter == 'declined') echo 'selected'; ?>>Declined</option>
+            <option value="PENDING" <?php if ($statusFilter == 'PENDING') echo 'selected'; ?>>Pending</option>
+            <option value="APPROVE" <?php if ($statusFilter == 'APPROVE') echo 'selected'; ?>>Approved</option>
+            <option value="DECLINED" <?php if ($statusFilter == 'DECLINED') echo 'selected'; ?>>Declined</option>
         </select>
-        <input type="submit" value="Filter">
+        <input type="submit" value="Search">
     </form>
 
     <table>
-        <thead>
-            <tr>
-                <th>Order ID</th>
-                <th>Agent ID</th>
-                <th>Customer Name</th>
-                <th>Customer Address</th>
-                <th>Customer Phone Number</th>
-                <th>Product ID</th>
+        <tr>
+            <th>Order ID</th>
+            <th>Agent ID</th>
+            <th>Customer Name</th>
+            <th>Customer Address</th>
+            <th>Customer Phone</th>
+            <th>Product ID</th>
                 <th>Order Quantity</th>
-                <th>Status</th>
-                <?php if ($statusFilter !== 'approved' && $statusFilter !== 'declined') { ?>
-                    <th>Action</th>
-                <?php } ?>
-            </tr>
-        </thead>
-        <tbody>
-            <?php foreach ($orderResults as $row) { ?>
+            <th>Status</th>
+            <th>Action</th>
+        </tr>
+
+        <?php
+        if ($totalOrder > 0) {
+            foreach ($orderResults as $row) {
+        ?>
                 <tr>
                     <td><?php echo $row['order_id']; ?></td>
                     <td><?php echo $row['agent_id']; ?></td>
@@ -129,17 +125,21 @@ if ($role == 'supplier') {
                     <td><?php echo $row['product_id']; ?></td>
                     <td><?php echo $row['order_quantity']; ?></td>
                     <td><?php echo $row['status']; ?></td>
-                    <?php if ($statusFilter !== 'approved' && $statusFilter !== 'declined') { ?>
-                        <td>
-                            <?php if ($row['status'] == 'PENDING') { ?>
+                    <td>
+                        <form method="post" action="">
+                        <?php if ($row['status'] == 'PENDING') { ?>
                                 <a href="approve.php?id=<?php echo $row['order_id']; ?>">Approve</a> |
-                                <a href="decline.php?id=<?php echo $row['order_id']; ?>">Decline</a>
+                                <a href="decline.php?id=<?php echo $row['order_id']; ?>">Declined</a>
                             <?php } ?>
-                        </td>
-                    <?php } ?>
+                        </form>
+                    </td>
                 </tr>
-            <?php } ?>
-        </tbody>
+        <?php
+            }
+        } else {
+            echo "<tr><td colspan='9'>No orders found.</td></tr>";
+        }
+        ?>
     </table>
 
     <div class="pagination">
@@ -175,9 +175,11 @@ if ($role == 'supplier') {
     </form>
 </body>
 
+</body>
+
 </html>
 <?php
-include('./includes/footer.html');
+  include('./includes/footer.html');
 } else {
     header("Location: Order.php");
     exit();
