@@ -8,6 +8,13 @@ echo '<h1 id="mainhead">Product List</h1>';
 require_once('mysqli.php'); // Connect to the db.
 global $dbc;
 
+$errors = [];
+if (!isset($_SESSION['role'])) {
+    $errors[] = 'Invalid role. Please log in again.';
+} else {
+    $role = $_SESSION['role'];
+}
+
 // Make the query.
 $query = "SELECT product_id, product_name, product_description, cost, price, quantity, supplier_id FROM products ORDER BY product_id ASC";
 $result = @mysqli_query($dbc, $query); // Run the query.
@@ -35,16 +42,18 @@ if ($num > 0) { // If it ran OK, display the records.
     }
 
     echo '</table>';
-    //discovery 
-    echo <<<HTML
-    <form  method="post">
-    <div class="tengah" style="display: flex;justify-content: center;flex-direction: row;">
-    <div class="butang" style="margin-top: 20px;margin-bottom: 20px;">
+
+    if ($role == 'supplier') {
+        //discovery 
+        echo <<<HTML
+        <form  method="post">
+        <div class="tengah" style="display: flex;justify-content: center;flex-direction: row;">
+        <div class="butang" style="margin-top: 20px;margin-bottom: 20px;">
                 <span></span>
                 <span></span>
                 <span></span>
                 <span></span>
-    <input type="submit" name="add" value="ADD PRODUCT" class="butang-teks">
+        <input type="submit" name="add" value="ADD PRODUCT" class="butang-teks">
             </div>
             <div class="butang" style="margin-top: 20px;margin-bottom: 20px;">
                 <span></span>
@@ -54,23 +63,24 @@ if ($num > 0) { // If it ran OK, display the records.
                 <input type="submit" name="update" value="UPDATE PRODUCT" class="butang-teks">
             </div>
         </div>
-    </form>
-    HTML;
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $errors = [];
-    
-        if (isset($_POST['add'])) {
-            header("Location: AddProduct.php");
-            exit();
-        } else if (isset($_POST['update'])) {
-            header("Location: UpdateProduct.php");
-            exit();
-        } else {
-            $errors[] = 'Please select an option.';
-        }
-    
-        if (!empty($errors)) {
-            echo '<p class="error">' . implode('<br>', $errors) . '</p>';
+        </form>
+        HTML;
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $errors = [];
+
+            if (isset($_POST['add'])) {
+                header("Location: AddProduct.php");
+                exit();
+            } else if (isset($_POST['update'])) {
+                header("Location: UpdateProduct.php");
+                exit();
+            } else {
+                $errors[] = 'Please select an option.';
+            }
+
+            if (!empty($errors)) {
+                echo '<p class="error">' . implode('<br>', $errors) . '</p>';
+            }
         }
     }
     @mysqli_free_result($result); // Free up the resources.

@@ -54,7 +54,7 @@ if ($role == 'supplier') {
 			  <span class="link-text">Orders</span>
 			</a>
 		  </li>
-        <li class="nav-item">
+    <li class="nav-item" <?php if($role == 'agent') echo 'style="display:none"'; ?>>
         <a href="viewSale.php" class="nav-link">
           <div class="emoji">
           💰</div>
