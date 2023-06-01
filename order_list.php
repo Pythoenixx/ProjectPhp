@@ -28,7 +28,7 @@ if (!isset($_SESSION['role'])) {
             $agentCount = $agentRow['agent_count'];
 
             if ($agentCount == 0) {
-                $errors[] = 'Agent is not registered with this supplier.';
+                $errors[] = 'Agent is not registered with your supplier.';
             }
         }
     }
@@ -38,8 +38,8 @@ if (!isset($_SESSION['role'])) {
 if (!empty($errors)) {
     foreach ($errors as $error) {
         echo $error . '<br>';
-    }
-    exit();
+   }
+ exit();
 }
 
 if ($role == 'supplier') {
