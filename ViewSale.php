@@ -78,7 +78,7 @@ if (isset($selected)) {
         // Check if there are any sales records
         if ($result->num_rows > 0) {
             // Display the sales data in a table
-            echo '<table>
+    echo '<table align="center">
             <tr>
                 <th>Sale ID</th>
                 <th>Quantity Sold</th>
